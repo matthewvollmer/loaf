@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>924078627556-l79njh8f7mdqk6pu64nr5qvevedg3m5m.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.924078627556-l79njh8f7mdqk6pu64nr5qvevedg3m5m</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>924078627556-anm3dqruptp75kq2h4ggk6nrvrlo5dem.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyD7PxuxBwA4HghSf8k0EsB-ALzIv69Ck9U</string>
+	<key>GCM_SENDER_ID</key>
+	<string>924078627556</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.mdv.loaf</string>
+	<key>PROJECT_ID</key>
+	<string>loaf-eaa81</string>
+	<key>STORAGE_BUCKET</key>
+	<string>loaf-eaa81.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:924078627556:ios:94138dce0d8e3a9d952af1</string>
+	<key>DATABASE_URL</key>
+	<string>https://loaf-eaa81.firebaseio.com</string>
+</dict>
+</plist>

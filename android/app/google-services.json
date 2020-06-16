@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "924078627556",
+    "firebase_url": "https://loaf-eaa81.firebaseio.com",
+    "project_id": "loaf-eaa81",
+    "storage_bucket": "loaf-eaa81.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:924078627556:android:fe397332cc08da21952af1",
+        "android_client_info": {
+          "package_name": "com.mdv.loaf"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "924078627556-anm3dqruptp75kq2h4ggk6nrvrlo5dem.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mdv.loaf",
+            "certificate_hash": "dc512469aba2127e6749597f1e0ab785562554c7"
+          }
+        },
+        {
+          "client_id": "924078627556-bg4jr0fsi0r6j2c0u726b5o4uinqhiso.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwUzvsBSb6N6i81R23BIWStK4nXNJJYSM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "924078627556-bg4jr0fsi0r6j2c0u726b5o4uinqhiso.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
