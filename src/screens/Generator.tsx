@@ -8,9 +8,7 @@
 
 import React from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
-  ScrollView,
   View,
   Text,
   PermissionsAndroid,
@@ -19,16 +17,12 @@ import {
   ToastAndroid,
 } from 'react-native';
 
-import {Button,Image} from 'react-native-elements'
+import {Button,Image, Input} from 'react-native-elements'
 
 import CameraRoll from "@react-native-community/cameraroll";
 
 import {
-  Header,
-  LearnMoreLinks,
   Colors,
-  DebugInstructions,
-  ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
 import ViewShot from 'react-native-view-shot';
@@ -36,8 +30,14 @@ import {firebase, FirebaseStorageTypes} from '@react-native-firebase/storage';
 import Share from 'react-native-share';
 import ImageFilters from 'react-native-gl-image-filters';
 import { Surface } from 'gl-react-native';
-import { createLoaf } from '../data/loafs';
+import { createLoaf, getLoafs } from '../data/loafs';
 import { buzzwords } from '../data/buzzwords'
+import { script } from "../data/script"
+import Modal from 'react-native-modal';
+import admob, { BannerAd, TestIds, MaxAdContentRating, BannerAdSize } from '@react-native-firebase/admob';
+import { MarkovGen } from 'markov-generator'
+import { Loaf } from '../data/types';
+import { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 
 interface State {
   captureUri: string,
@@ -57,7 +57,14 @@ interface State {
   negative: number,
   contrast: number,
   saturation: number,
-  temperature: number
+  temperature: number,
+  showNameEntry: boolean,
+  loaferName?: string,
+  submitPending:boolean,
+  markov?: MarkovGen,
+
+  regenerateMarkovAfterCount: number,
+  countSinceRegenerateMArkov: number,
 }
 
 interface Props {
@@ -72,7 +79,6 @@ interface Refs {
 export default class Generator extends React.Component<Props, State> {
   public randomWords = require('random-words');
   public refs2 : Refs = {};
-  loading: boolean = false;
   constructor(props: Readonly<Props>) {
     super(props);
 
@@ -80,7 +86,7 @@ export default class Generator extends React.Component<Props, State> {
       captureUri: '',
       //sourceImage: require('./assets/images.png'),
       memeText: '',
-       imageLoading: false,
+       imageLoading: true,
        font: 'aAlloyInk',
        fontArray: [
           'aAlloyInk',
@@ -89,7 +95,10 @@ export default class Generator extends React.Component<Props, State> {
           'Fipps-Regular',
           'BatmanBeatthehellOuttaMe',
           'firewood',
-          'BoyzRGross'
+          'BoyzRGross',
+          'gomarice_tanomuze_cowboy',
+          'Retro_Stereo_Wide',
+          'vanillawhale'
        ],
        buzzwords: buzzwords,
        hue: 0,
@@ -99,11 +108,16 @@ export default class Generator extends React.Component<Props, State> {
        negative: 0,
        contrast: 1,
        saturation: 1,
-       temperature: 6500
+       temperature: 6500,
+       showNameEntry: false,
+       submitPending: false,
+       regenerateMarkovAfterCount: 6,
+       countSinceRegenerateMArkov: 0
     }
   }
 
   public async componentDidMount() {
+    await this.generateMarkov();
     try {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
@@ -125,20 +139,12 @@ export default class Generator extends React.Component<Props, State> {
     } catch (err) {
       console.warn(err);
     }
-    let options = {
-      apiKey: "AIzaSyCwUzvsBSb6N6i81R23BIWStK4nXNJJYSM",
-      //authDomain: "<your-auth-domain>",
-      databaseURL: "<https://loaf-eaa81.firebaseio.com/loafs",
-      storageBucket: "gs://loaf-eaa81.appspot.com",
-      appId: '1:924078627556:android:fe397332cc08da21952af1',
-      projectId: 'loaf-eaa81'
-    }
-    !firebase.apps.length ? firebase.initializeApp(options) : firebase.app();
     await this.setState({ imageRefArray: await firebase.storage().ref().child("loafPics").listAll()})
     await this.generate();
   }
 
   public render() {
+    const adId = __DEV__ ?  TestIds.BANNER : "ca-app-pub-9855234796425536/6028942568";
     return  (
       <View style={{
           justifyContent: 'space-between',
@@ -146,18 +152,44 @@ export default class Generator extends React.Component<Props, State> {
         }}>
         <View style={{ top:0}}>
         </View>
+        <Modal isVisible={this.state.submitPending}
+            >
+              <ActivityIndicator size='large' style={{alignSelf:'center'}} color='white'></ActivityIndicator>
+            </Modal>
+        <Modal isVisible={this.state.showNameEntry}
+          onBackButtonPress={() => this.setState({showNameEntry: false})}
+          onBackdropPress={() => this.setState({showNameEntry: false})}
+        >
+          <View style={{backgroundColor:'white', borderRadius: 12, 
+              alignSelf: 'center', justifyContent:'flex-start'}}>
+            <Text style={[styles.buttonTitleStyle, {margin:12, fontSize: 24, textAlign:'center'}]}>Who created this loaf masterpiece?</Text>
+            <Input 
+              containerStyle={{margin: 12, alignSelf: 'center', width:250}}
+              label='Loafer' labelStyle={styles.buttonTitleStyle} inputStyle={styles.buttonTitleStyle}
+              value={this.state.loaferName}
+              onChangeText={(text) => this.setState({loaferName: text})}
+              />
+            <Button 
+              buttonStyle={{width: 200, alignSelf: 'center', marginBottom: 24}}
+              titleStyle={styles.buttonTitleStyle} title='Submit Loaf' disabled={!this.state.loaferName}
+              onPress={this.handleSubmitToLeaderboard}
+            ></Button>
+          </View>
+        </Modal>
         <View style={{alignSelf: 'center', borderColor: 'black', borderRadius: 4, borderWidth: 2, justifyContent:'center', width:350}}>
+          {this.state.imageLoading ? 
+          <View
+            style={{width:350, height:400}}>
+              <ActivityIndicator size='large' style={{alignSelf: 'center', top:180}}></ActivityIndicator>
+          </View> : 
           <ViewShot
             ref="viewShot"
             style={styles.body}
+            options={{format:'jpg', quality:.2}}
             onCapture={(uri: any) => this.onCapture(uri)}>
               <Surface
-                style={{width:350, height:350, backgroundBottomColor: 'white'}}
+                style={{width:350, height:350, }}
               >
-                  {/* {this.state.imageLoading ? 
-                  <View style={{width:350, height: 350}}>
-                    <ActivityIndicator animating={this.loading}></ActivityIndicator> 
-                  </View>: */}
                   <ImageFilters
                     width={350}
                     height={350}
@@ -168,7 +200,7 @@ export default class Generator extends React.Component<Props, State> {
                     saturation={this.state.saturation}
                     temperature={this.state.temperature}
                     >
-                    {{uri: this.state.testUri}}
+                      {{uri: this.state.testUri}}
                   </ImageFilters>
               {/* } */}
               </Surface>
@@ -177,14 +209,27 @@ export default class Generator extends React.Component<Props, State> {
                   fontSize: this.state.font==='Fipps-Regular' ? 14 : 20}}>
                 {this.state.memeText}
               </Text>
-          </ViewShot>
+          </ViewShot>}
         </View>
         <View style={{}}>
           <Button buttonStyle={{alignSelf:'center', marginVertical:8, width:220}} onPress={this.generate} title={'Generate Meme'} titleStyle={styles.buttonTitleStyle}/>
-          <Button buttonStyle={{alignSelf:'center', marginVertical:8, width:220}} onPress={this.handleSubmitToLeaderboard} title={'Submit To Leaderboard'} titleStyle={styles.buttonTitleStyle}/>
+          <Button buttonStyle={{alignSelf:'center', marginVertical:8, width:220}} onPress={this.handleSubmitToLeaderboardPress} title={'Submit To Leaderboard'} titleStyle={styles.buttonTitleStyle}/>
           <Button type='outline' buttonStyle={{alignSelf:'center', marginVertical:8, width:220}} onPress={this.cap} title={'Save To Phone'} titleStyle={styles.buttonTitleStyle}/>
           <Button type='outline' buttonStyle={{alignSelf:'center', marginVertical:8, width:220}} onPress={this.handleShare} title={'Share External'} titleStyle={styles.buttonTitleStyle}/>
         </View>
+        <View style={{bottom:0, alignSelf: 'center'}}>
+                <BannerAd 
+                  unitId={adId}
+                  size={BannerAdSize.BANNER}
+                  requestOptions={{
+                    requestNonPersonalizedAdsOnly: true,
+                  }}
+                  onAdLoaded={() => {
+                    console.log('Advert loaded');}}
+                  onAdFailedToLoad={(error: any) => {
+                    console.log('Advert failed to load: ', error);}}
+                />
+              </View>
       </View>
     )
   }
@@ -200,7 +245,7 @@ export default class Generator extends React.Component<Props, State> {
       message: 'Enjoy this wonderful meme created with Loaf',
       url: this.state.captureUri,
       social: Share.Social.INSTAGRAM_STORIES,
-      backgroundBottomColor: '#fefefe',
+      //backgroundBottomColor: '#fefefe',
       backgroundTopColor: '#906df4',
       filename: 'test' , // only for base64 file in Android
   };
@@ -212,17 +257,30 @@ export default class Generator extends React.Component<Props, State> {
     }
   }
 
+  private handleSubmitToLeaderboardPress = () => {
+    this.setState({showNameEntry: true});
+  }
+
   private handleSubmitToLeaderboard = async () => {
+    this.setState({submitPending: true})
     await this.capWithoutSave();
-    createLoaf({creator:'TEST', date: new Date(), score: 1},this.state.captureUri);
+    await createLoaf(
+      {
+        creator: this.state.loaferName, 
+        date: new Date(), 
+        score: 1,
+        text: this.state.memeText
+      },
+      this.state.captureUri);
+    this.setState({showNameEntry: false, submitPending: false});
   }
 
 
-
-  private replaceRandomWordWithBuzzWord (randomWords : string[], numWords: number) {
-    const randomNumberForWords : number = Math.floor(Math.random() * numWords);
-    randomWords[randomNumberForWords] = this.getRandomBuzzWord();
-    return randomWords;
+  private replaceRandomWordWithBuzzWord (memeText : string, numWords: number) {
+    let randomWordsSplit = memeText.split(' ');
+    let randomNumberForWords : number = Math.floor(Math.random() * numWords);
+    randomWordsSplit[randomNumberForWords] = this.getRandomBuzzWord();
+    return randomWordsSplit.join(' ')
   }
 
   private getRandomBuzzWord = () => {
@@ -230,22 +288,56 @@ export default class Generator extends React.Component<Props, State> {
     return this.state.buzzwords[randomNumberForWords];
   }
 
+  private generateMarkov = async () => {
+    let scriptCopy = script;
+    let lastWeek = new Date();
+    //Calculate last week
+    lastWeek.setDate(lastWeek.getDate()-7);
+    //Pull in top loafs of last week
+    let loafs : FirebaseFirestoreTypes.QuerySnapshot = 
+      await (await getLoafs()).where('loaf.date', '>', lastWeek).limit(12).get();
+    //Add recent top loaf texts to the markov, weighted. 
+    loafs.forEach((loaf: FirebaseFirestoreTypes.QueryDocumentSnapshot) => {
+      let loafData = loaf.data();
+      console.log("this loaf's data: #" + loafData.loaf.score + " text:" + loafData.loaf.text)
+      if (loafData.loaf.text) {
+        for (let i: number = 0; i<loafData.loaf.score; i++) {
+          scriptCopy.push(loafData.loaf.text);
+        }
+      }
+    })
+    const MarkovGen = require('markov-generator');
+    this.setState({
+      markov: new MarkovGen({input: scriptCopy, minLength: 3})
+    })
+  }
+
+  private generateMarkovSafely = () => {
+    this.setState({
+      markov: new MarkovGen({input: script, minLength: 3})
+    })
+  }
+
+  private regenerateMarkovIfNeeded = async () => {
+    if (this.state.countSinceRegenerateMArkov === this.state.regenerateMarkovAfterCount) {
+      try{
+        await this.generateMarkov();
+      }
+      catch (err) {
+        console.log("retrieval for markov failed. generating from stored library")
+        if (!this.state.markov) {
+          this. generateMarkovSafely();
+        }
+      }
+    }
+    this.setState({
+      countSinceRegenerateMArkov : this.state.countSinceRegenerateMArkov+1
+    })
+  }
+
   private generate = async () => {
-    this.setState({imageLoading: true})
-    this.loading = true;
-    const numWords = Math.floor(Math.random() * (7-3) + 3)
-    let randomWords = this.randomWords(numWords);
-
-    if (numWords > 4) {
-      this.replaceRandomWordWithBuzzWord(randomWords, numWords);
-      this.replaceRandomWordWithBuzzWord(randomWords, numWords);
-    }
-    else {
-      this.replaceRandomWordWithBuzzWord(randomWords, numWords);
-    }
-
-    const randomWordsJoined = randomWords.join(' ')
-    let firstCharUppercase = randomWordsJoined.charAt(0).toUpperCase() + randomWordsJoined.slice(1) + '.';
+    await this.regenerateMarkovIfNeeded();
+    this.setState({imageLoading: true});
 
     let randomNumberForImage : number;
     randomNumberForImage = Math.floor(Math.random() * this.state.imageRefArray.items.length);
@@ -255,18 +347,29 @@ export default class Generator extends React.Component<Props, State> {
     const newUri  = await this.state.imageRefArray.items[randomNumberForImage].getDownloadURL();
     const randomNumberForFont : number = Math.floor(Math.random() * this.state.fontArray.length);
 
+    let memeText = this.state.markov.makeChain();
+    const numWords = memeText.split(" ").length;
+    if (numWords > 6) {
+      memeText = this.replaceRandomWordWithBuzzWord(memeText, numWords);
+      memeText = this.replaceRandomWordWithBuzzWord(memeText, numWords);
+    }
+    else {
+      memeText = this.replaceRandomWordWithBuzzWord(memeText, numWords);
+    }
+    if (!memeText.endsWith(".")) {memeText += '.'}
+    let firstCharUppercase = memeText.charAt(0).toUpperCase() + memeText.slice(1)
+    
+
     await this.setState({
       sourceImage: {uri: newUri},
       imageIndex: randomNumberForImage,
       memeText: firstCharUppercase,
       testUri: newUri,
       font: this.state.fontArray[randomNumberForFont],
-      imageLoading: false
     })
 
     this.applyRandomFilter();
     this.setState({imageLoading: false})
-    this.loading=false;
   }
 
   private applyRandomFilter = () => {
@@ -330,16 +433,12 @@ export default class Generator extends React.Component<Props, State> {
   }
 
   private cap = async () => {
-    console.log("this.refs.viewShot is: " + this.refs.viewShot)
     const uri = await this.refs.viewShot.capture();
-    console.log("captureUri was: " + uri);
     CameraRoll.save(uri)
   }
 
   private capWithoutSave = async () => {
-    console.log("this.refs.viewShot is: " + this.refs.viewShot)
     const uri = await this.refs.viewShot.capture();
-    console.log("captureUri was: " + uri);
   }
   
 }
@@ -349,6 +448,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
   },
   buttonTitleStyle: {
-    fontFamily:'aAlloyInk', 
+    fontFamily:'Nathaniel19-Regular', 
   }
 });

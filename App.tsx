@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     width: 80,
   },
   headerTextStyles: {
-    fontFamily:'aAlloyInk', 
+    fontFamily:'Nathaniel19-Regular', 
     color: 'black',
     fontWeight: '800',
     fontSize: 20

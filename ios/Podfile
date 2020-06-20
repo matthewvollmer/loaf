@@ -81,8 +81,6 @@ target 'beanmemes' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-  pod 'RNStoryShare', :path => '../node_modules/react-native-story-share'
-
   target 'beanmemesTests' do
     inherit! :complete
     # Pods for testing

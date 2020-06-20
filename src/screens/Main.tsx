@@ -4,6 +4,7 @@ import { Button } from 'react-native-elements'
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../App';
+import admob, { BannerAd, TestIds, MaxAdContentRating, BannerAdSize } from '@react-native-firebase/admob';
 
 //interface Props extends NavigationInjectedProps {}
 
@@ -30,7 +31,26 @@ class Main extends React.Component<Props, State> {
       }
   }
 
+  public componentDidMount() {
+    admob()
+      .setRequestConfiguration({
+        // Update all future requests suitable for parental guidance
+        maxAdContentRating: MaxAdContentRating.G,
+
+        // Indicates that you want your content treated as child-directed for purposes of COPPA.
+        tagForChildDirectedTreatment: false,
+
+        // Indicates that you want the ad request to be handled in a
+        // manner suitable for users under the age of consent.
+        tagForUnderAgeOfConsent: true,
+      })
+      .then(() => {
+        // Request config successfully set!
+      });
+  }
+
     public render() {
+        const adId = __DEV__ ?  TestIds.BANNER : "ca-app-pub-9855234796425536/6028942568";
         return (
           <View style={styles.parentContainer}>
               <Button
@@ -45,13 +65,26 @@ class Main extends React.Component<Props, State> {
                 title={'Leaderboard'}
                 onPress={() => this.props.navigation.navigate('Leaderboard')}>
               </Button>
-            </View>
+              <View style={{position:'absolute', bottom:0}}>
+                <BannerAd 
+                  unitId={adId}
+                  size={BannerAdSize.BANNER}
+                  requestOptions={{
+                    requestNonPersonalizedAdsOnly: true,
+                  }}
+                  onAdLoaded={() => {
+                    console.log('Advert loaded');}}
+                  onAdFailedToLoad={(error: any) => {
+                    console.log('Advert failed to load: ', error);}}
+                />
+              </View>
+          </View>
         )
     }    
 }
 
 export default Main;
-
+////ca-app-pub-9855234796425536/5453123841
 const styles = StyleSheet.create({
   parentContainer: {
     flex: 1,
@@ -71,6 +104,6 @@ const styles = StyleSheet.create({
     //flex:1,
   },
   buttonTitleStyle: {
-    fontFamily:'aAlloyInk', 
+    fontFamily:'Nathaniel19-Regular', 
   }
 });
