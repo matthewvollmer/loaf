@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Image, ImageSourcePropType, FlatList, PermissionsAndroid, ActivityIndicator, ToastAndroid} from 'react-native';
+import { StyleSheet, View, ScrollView, Image, ImageSourcePropType, FlatList, PermissionsAndroid, ActivityIndicator, ToastAndroid, Platform} from 'react-native';
 import { Button, Text } from 'react-native-elements'
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
@@ -68,27 +68,28 @@ class Leaderboard extends React.Component<Props, State> {
   }
 
   public async componentDidMount () {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        {
-          title: "Read storage permissions",
-          message:
-            "Loaf needs access to your file storage so it can display images",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK"
+    if (Platform.OS==='android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+          {
+            title: "Read storage permissions",
+            message:
+              "Loaf needs access to your file storage so it can display images",
+            buttonNeutral: "Ask Me Later",
+            buttonNegative: "Cancel",
+            buttonPositive: "OK"
+          }
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log("You can read the storage");
+        } else {
+          console.log("Read Storage permission denied");
         }
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log("You can read the storage");
-      } else {
-        console.log("Read Storage permission denied");
+      } catch (err) {
+        console.warn(err);
       }
-    } catch (err) {
-      console.warn(err);
     }
-
   await this.buildLoafs();
 }
 

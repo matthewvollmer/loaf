@@ -95,7 +95,7 @@ export default class Generator extends React.Component<Props, State> {
        font: 'aAlloyInk',
        fontArray: [
           'aAlloyInk',
-          Platform.OS === 'android' && 'monospace',
+          //Platform.OS === 'android' && 'monospace',
           'Nathaniel19-Regular',
           'Fipps-Regular',
           'BatmanBeatthehellOuttaMe',
@@ -208,7 +208,7 @@ export default class Generator extends React.Component<Props, State> {
             style={styles.body}
             options={{format:'jpg', quality:.2}}
             onCapture={(uri: any) => this.onCapture(uri)}>
-              <Surface
+              {Platform.OS === 'android' ? <Surface
                 style={{width:350, height:350, }}
               >
                   <ImageFilters
@@ -221,32 +221,22 @@ export default class Generator extends React.Component<Props, State> {
                     saturation={this.state.saturation}
                     temperature={this.state.temperature}
                     >
-                      {/* {Platform.OS === 'android' && {uri: this.state.testUri}}
-                      {Platform.OS === 'ios' && 
-                      (
-                      <Image
-                        source={{uri: this.state.testUri, width: 350, height: 350}}
-                        resizeMode='contain'
-                        style={{flex:1, width: 350, height:350}}
-                        width={350}
-                        height={350}
-                      />)} */}
-                      {{uri: this.state.testUri, width: 350, height: 350}}
+                      {{uri: this.state.testUri}}
                   </ImageFilters>
-              </Surface>
+              </Surface> :
+              <View style={{width: 350, height:350}}>
+                <Image
+                  source={{uri: this.state.testUri, width: 350, height: 350}}
+                  resizeMode='contain'
+                  style={{flex:1, width: 350, height:350}}
+                />
+              </View> }
               <Text style={{textAlign:'center', alignSelf:'center', width: 350, flexWrap:'wrap',
                   fontFamily: this.state.font,
                   fontSize: this.state.font==='Fipps-Regular' ? 14 : 20}}>
                 {this.state.memeText}
               </Text>
           </ViewShot>}
-        </View>
-        <View style={{flex:1, width: 350, height:350}}>
-            <Image
-              source={{uri: this.state.testUri, width: 350, height: 350}}
-              resizeMode='contain'
-              style={{flex:1, width: 350, height:350}}
-            />
         </View>
         <View style={{}}>
           <Button buttonStyle={{alignSelf:'center', marginVertical:8, width:220}} onPress={this.generate} title={'Generate Meme'} titleStyle={styles.buttonTitleStyle}/>
