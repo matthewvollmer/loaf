@@ -91,6 +91,7 @@ target 'beanmemes' do
   end
 
   use_native_modules!
+  use_native_modules!
 
   # Enables Flipper.
   #

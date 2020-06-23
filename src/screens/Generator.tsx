@@ -16,9 +16,10 @@ import {
   ActivityIndicator,
   ToastAndroid,
   Platform,
+  Image
 } from 'react-native';
 
-import {Button,Image, Input} from 'react-native-elements'
+import {Button, Input} from 'react-native-elements'
 
 import CameraRoll from "@react-native-community/cameraroll";
 
@@ -31,6 +32,7 @@ import {firebase, FirebaseStorageTypes} from '@react-native-firebase/storage';
 import Share from 'react-native-share';
 import ImageFilters from 'react-native-gl-image-filters';
 import { Surface } from 'gl-react-native';
+import { Node, Shaders, GLSL } from 'gl-react'
 import { createLoaf, getLoafs } from '../data/loafs';
 import { buzzwords } from '../data/buzzwords'
 import { script } from "../data/script"
@@ -39,6 +41,7 @@ import admob, { BannerAd, TestIds, MaxAdContentRating, BannerAdSize } from '@rea
 import { MarkovGen } from 'markov-generator'
 import { Loaf } from '../data/types';
 import { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
+import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
 
 interface State {
   captureUri: string,
@@ -63,6 +66,7 @@ interface State {
   loaferName?: string,
   submitPending:boolean,
   markov?: MarkovGen,
+  testImage: ImageSourcePropType,
 
   regenerateMarkovAfterCount: number,
   countSinceRegenerateMArkov: number,
@@ -97,9 +101,9 @@ export default class Generator extends React.Component<Props, State> {
           'BatmanBeatthehellOuttaMe',
           'firewood',
           'BoyzRGross',
-          'gomarice_tanomuze_cowboy',
-          'Retro_Stereo_Wide',
-          'vanillawhale'
+          //'gomarice_tanomuze_cowboy',
+          //'Retro_Stereo_Wide',
+          //'vanillawhale'
        ],
        buzzwords: buzzwords,
        hue: 0,
@@ -113,7 +117,8 @@ export default class Generator extends React.Component<Props, State> {
        showNameEntry: false,
        submitPending: false,
        regenerateMarkovAfterCount: 6,
-       countSinceRegenerateMArkov: 0
+       countSinceRegenerateMArkov: 0,
+       testImage: require('../../assets/BmtIdkrCcAAl39D.jpg')
     }
   }
 
@@ -216,7 +221,17 @@ export default class Generator extends React.Component<Props, State> {
                     saturation={this.state.saturation}
                     temperature={this.state.temperature}
                     >
-                      {{uri: this.state.testUri}}
+                      {/* {Platform.OS === 'android' && {uri: this.state.testUri}}
+                      {Platform.OS === 'ios' && 
+                      (
+                      <Image
+                        source={{uri: this.state.testUri, width: 350, height: 350}}
+                        resizeMode='contain'
+                        style={{flex:1, width: 350, height:350}}
+                        width={350}
+                        height={350}
+                      />)} */}
+                      {{uri: this.state.testUri, width: 350, height: 350}}
                   </ImageFilters>
               </Surface>
               <Text style={{textAlign:'center', alignSelf:'center', width: 350, flexWrap:'wrap',
@@ -225,6 +240,13 @@ export default class Generator extends React.Component<Props, State> {
                 {this.state.memeText}
               </Text>
           </ViewShot>}
+        </View>
+        <View style={{flex:1, width: 350, height:350}}>
+            <Image
+              source={{uri: this.state.testUri, width: 350, height: 350}}
+              resizeMode='contain'
+              style={{flex:1, width: 350, height:350}}
+            />
         </View>
         <View style={{}}>
           <Button buttonStyle={{alignSelf:'center', marginVertical:8, width:220}} onPress={this.generate} title={'Generate Meme'} titleStyle={styles.buttonTitleStyle}/>
@@ -360,6 +382,7 @@ export default class Generator extends React.Component<Props, State> {
       randomNumberForImage = Math.floor(Math.random() * this.state.imageRefArray.items.length);
     }
     const newUri  = await this.state.imageRefArray.items[randomNumberForImage].getDownloadURL();
+    console.log("XXX NEW URI IS: "+ newUri);
     const randomNumberForFont : number = Math.floor(Math.random() * this.state.fontArray.length);
 
     let memeText = this.state.markov.makeChain();
@@ -464,5 +487,31 @@ const styles = StyleSheet.create({
   },
   buttonTitleStyle: {
     fontFamily:'Nathaniel19-Regular', 
+  }
+});
+
+
+const shaders = Shaders.create({
+  Amaro: {
+    frag: GLSL`
+      precision highp float;
+      varying highp vec2 uv;
+      uniform sampler2D inputImageTexture;
+      uniform sampler2D inputImageTexture2;
+      uniform sampler2D inputImageTexture3;
+      uniform sampler2D inputImageTexture4;
+      void main () {
+        vec4 texel = texture2D(inputImageTexture, uv);
+        vec3 bbTexel = texture2D(inputImageTexture2, uv).rgb;
+        texel.r = texture2D(inputImageTexture3, vec2(bbTexel.r, (1.0-texel.r))).r;
+        texel.g = texture2D(inputImageTexture3, vec2(bbTexel.g, (1.0-texel.g))).g;
+        texel.b = texture2D(inputImageTexture3, vec2(bbTexel.b, (1.0-texel.b))).b;
+        vec4 mapped;
+        mapped.r = texture2D(inputImageTexture4, vec2(texel.r, .83333)).r;
+        mapped.g = texture2D(inputImageTexture4, vec2(texel.g, .5)).g;
+        mapped.b = texture2D(inputImageTexture4, vec2(texel.b, .16666)).b;
+        mapped.a = 1.0;
+        gl_FragColor = mapped;
+      }`
   }
 });

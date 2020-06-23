@@ -33,6 +33,7 @@
 		BB188125249833FD008D87DA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB188123249833FD008D87DA /* GoogleService-Info.plist */; };
 		BB188126249833FD008D87DA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB188123249833FD008D87DA /* GoogleService-Info.plist */; };
 		BB188127249833FD008D87DA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB188123249833FD008D87DA /* GoogleService-Info.plist */; };
+		BBC59BB724A2B6A1001EB7E4 /* libEXGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC59BB624A2B6A1001EB7E4 /* libEXGL.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,6 +96,7 @@
 		BB0B7CA6249D8EE5002477FB /* vanillawhale.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = vanillawhale.ttf; path = ../assets/fonts/vanillawhale.ttf; sourceTree = "<group>"; };
 		BB188123249833FD008D87DA /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BB5553A18E77B1E7EB94CEFB /* Pods-beanmemes-beanmemesTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-beanmemes-beanmemesTests.release.xcconfig"; path = "Target Support Files/Pods-beanmemes-beanmemesTests/Pods-beanmemes-beanmemesTests.release.xcconfig"; sourceTree = "<group>"; };
+		BBC59BB624A2B6A1001EB7E4 /* libEXGL.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libEXGL.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C01ABEB5CB224584A97512B8 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		C038E7F3989A4BEE9A3CB6EC /* Pods-beanmemes-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-beanmemes-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-beanmemes-tvOS/Pods-beanmemes-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		C2A6E22F059B4733AC1E83C3 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
@@ -122,6 +124,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BBC59BB724A2B6A1001EB7E4 /* libEXGL.a in Frameworks */,
 				48FE2D2C7B0E294BCB602536 /* libPods-beanmemes.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -179,6 +182,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BBC59BB624A2B6A1001EB7E4 /* libEXGL.a */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				0AB04D04B25943A4987971A2 /* libPods-beanmemes.a */,
