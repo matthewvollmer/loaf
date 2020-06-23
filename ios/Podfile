@@ -1,4 +1,4 @@
-platform :ios, '9.0'
+platform :ios, '10.0'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 def add_flipper_pods!(versions = {})
@@ -44,6 +44,8 @@ def flipper_post_install(installer)
   end
 end
 
+require_relative '../node_modules/react-native-unimodules/cocoapods.rb'
+
 target 'beanmemes' do
   # Pods for beanmemes
   # add the Firebase pod for Google Analytics
@@ -80,6 +82,8 @@ target 'beanmemes' do
   pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+
+  use_unimodules!
 
   target 'beanmemesTests' do
     inherit! :complete

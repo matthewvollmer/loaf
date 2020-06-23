@@ -15,6 +15,7 @@ import {
   ImageSourcePropType,
   ActivityIndicator,
   ToastAndroid,
+  Platform,
 } from 'react-native';
 
 import {Button,Image, Input} from 'react-native-elements'
@@ -90,7 +91,7 @@ export default class Generator extends React.Component<Props, State> {
        font: 'aAlloyInk',
        fontArray: [
           'aAlloyInk',
-          'monospace',
+          Platform.OS === 'android' && 'monospace',
           'Nathaniel19-Regular',
           'Fipps-Regular',
           'BatmanBeatthehellOuttaMe',
@@ -118,28 +119,43 @@ export default class Generator extends React.Component<Props, State> {
 
   public async componentDidMount() {
     await this.generateMarkov();
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        {
-          title: "Write storage permissions",
-          message:
-            "Cool Photo App needs access to your camera " +
-            "so you can take awesome pictures.",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK"
+    if (Platform.OS === 'android'){
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: "Write storage permissions",
+            message:
+              "Cool Photo App needs access to your camera " +
+              "so you can take awesome pictures.",
+            buttonNeutral: "Ask Me Later",
+            buttonNegative: "Cancel",
+            buttonPositive: "OK"
+          }
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log("You can use the storage");
+        } else {
+          console.log("Storage permission denied");
         }
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log("You can use the storage");
-      } else {
-        console.log("Storage permission denied");
+      } catch (err) {
+        console.warn(err);
       }
-    } catch (err) {
-      console.warn(err);
     }
+
+    // let options = {
+    //   apiKey: "AIzaSyCwUzvsBSb6N6i81R23BIWStK4nXNJJYSM",
+    //   //authDomain: "<your-auth-domain>",
+    //   databaseURL: "<https://loaf-eaa81.firebaseio.com/loafs",
+    //   storageBucket: "gs://loaf-eaa81.appspot.com",
+    //   appId: '1:924078627556:android:fe397332cc08da21952af1',
+    //   projectId: 'loaf-eaa81'
+    // }
+    // !firebase.apps.length ? firebase.initializeApp(options) : firebase.app();
+
+
     await this.setState({ imageRefArray: await firebase.storage().ref().child("loafPics").listAll()})
+    console.log("successfully downloaded image refs. Count: " + this.state.imageRefArray.items.length);
     await this.generate();
   }
 
@@ -202,7 +218,6 @@ export default class Generator extends React.Component<Props, State> {
                     >
                       {{uri: this.state.testUri}}
                   </ImageFilters>
-              {/* } */}
               </Surface>
               <Text style={{textAlign:'center', alignSelf:'center', width: 350, flexWrap:'wrap',
                   fontFamily: this.state.font,
@@ -434,7 +449,7 @@ export default class Generator extends React.Component<Props, State> {
 
   private cap = async () => {
     const uri = await this.refs.viewShot.capture();
-    CameraRoll.save(uri)
+    CameraRoll.save(uri, {album: 'loafs', type: 'photo'});
   }
 
   private capWithoutSave = async () => {
