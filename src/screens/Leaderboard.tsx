@@ -138,12 +138,13 @@ class Leaderboard extends React.Component<Props, State> {
 
                  }}
                 options={['Newest', 'Top This Week', 'Top All Time', 'Top Today']}
-                dropdownStyle={{alignSelf: 'center',width:'60%'}}
+                dropdownStyle={{alignSelf: 'center',width:'60%', height:135}}
                 onSelect={(idx, value) => this.handleChangeSortMethod(value)}
                 defaultValue="Newest"
                 textStyle={[styles.buttonTitleStyle,{alignSelf: 'center'}]}
                 dropdownTextStyle={styles.buttonTitleStyle}
                 animated={true}
+
                 
               />
               }

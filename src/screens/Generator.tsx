@@ -10,16 +10,17 @@ import React from 'react';
 import {
   StyleSheet,
   View,
-  Text,
   PermissionsAndroid,
   ImageSourcePropType,
   ActivityIndicator,
   ToastAndroid,
   Platform,
-  Image
+  Image,
+  Dimensions,
 } from 'react-native';
 
-import {Button, Input} from 'react-native-elements'
+import {Button, Input, 
+  Text,} from 'react-native-elements'
 
 import CameraRoll from "@react-native-community/cameraroll";
 
@@ -41,7 +42,7 @@ import admob, { BannerAd, TestIds, MaxAdContentRating, BannerAdSize } from '@rea
 import { MarkovGen } from 'markov-generator'
 import { Loaf } from '../data/types';
 import { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
-import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
+import { ScrollView } from 'react-native-gesture-handler';
 
 interface State {
   captureUri: string,
@@ -67,6 +68,7 @@ interface State {
   submitPending:boolean,
   markov?: MarkovGen,
   testImage: ImageSourcePropType,
+  pictureBoxDimension: number,
 
   regenerateMarkovAfterCount: number,
   countSinceRegenerateMArkov: number,
@@ -95,15 +97,16 @@ export default class Generator extends React.Component<Props, State> {
        font: 'aAlloyInk',
        fontArray: [
           'aAlloyInk',
-          //Platform.OS === 'android' && 'monospace',
+          'monospace',
           'Nathaniel19-Regular',
           'Fipps-Regular',
-          'BatmanBeatthehellOuttaMe',
-          'firewood',
-          'BoyzRGross',
-          //'gomarice_tanomuze_cowboy',
-          //'Retro_Stereo_Wide',
-          //'vanillawhale'
+          'aAhaWow',
+          'KOMTITK_',
+          'StrangerThings-Regular',
+          'AirAmericana',
+          'gomarice_tanomuze_cowboy',
+          'Retro_Stereo_Wide',
+          'vanillawhale'
        ],
        buzzwords: buzzwords,
        hue: 0,
@@ -118,7 +121,8 @@ export default class Generator extends React.Component<Props, State> {
        submitPending: false,
        regenerateMarkovAfterCount: 6,
        countSinceRegenerateMArkov: 0,
-       testImage: require('../../assets/BmtIdkrCcAAl39D.jpg')
+       testImage: require('../../assets/BmtIdkrCcAAl39D.jpg'),
+       pictureBoxDimension: Dimensions.get('window').width * .85,
     }
   }
 
@@ -146,6 +150,8 @@ export default class Generator extends React.Component<Props, State> {
       } catch (err) {
         console.warn(err);
       }
+
+      console.log("Totaly screen height is: " + Dimensions.get("window").height + " .1 is: "+Dimensions.get("window").height*.1);
     }
 
     // let options = {
@@ -160,7 +166,6 @@ export default class Generator extends React.Component<Props, State> {
 
 
     await this.setState({ imageRefArray: await firebase.storage().ref().child("loafPics").listAll()})
-    console.log("successfully downloaded image refs. Count: " + this.state.imageRefArray.items.length);
     await this.generate();
   }
 
@@ -168,7 +173,6 @@ export default class Generator extends React.Component<Props, State> {
     const adId = __DEV__ ?  TestIds.BANNER : "ca-app-pub-9855234796425536/6028942568";
     return  (
       <View style={{
-          justifyContent: 'space-between',
           flex:1
         }}>
         <View style={{ top:0}}>
@@ -197,53 +201,98 @@ export default class Generator extends React.Component<Props, State> {
             ></Button>
           </View>
         </Modal>
-        <View style={{alignSelf: 'center', borderColor: 'black', borderRadius: 4, borderWidth: 2, justifyContent:'center', width:350}}>
+        <View style={{
+            alignSelf: 'center', 
+            justifyContent:'center', width:this.state.pictureBoxDimension + 4,
+            marginVertical: 8
+          }}>
           {this.state.imageLoading ? 
           <View
-            style={{width:350, height:400}}>
+            style={{
+              width:this.state.pictureBoxDimension + 4, 
+              height: this.state.pictureBoxDimension + Dimensions.get("window").height * .1 + 8,
+              borderColor: 'black', borderRadius: 4, borderWidth: 2, 
+            }}>
               <ActivityIndicator size='large' style={{alignSelf: 'center', top:180}}></ActivityIndicator>
           </View> : 
           <ViewShot
             ref="viewShot"
-            style={styles.body}
+            style={{backgroundColor: 'white', borderColor: 'black', borderRadius: 4, borderWidth: 2}}
             options={{format:'jpg', quality:.2}}
             onCapture={(uri: any) => this.onCapture(uri)}>
-              {Platform.OS === 'android' ? <Surface
-                style={{width:350, height:350, }}
+              {Platform.OS === 'android' ? 
+              <Surface
+                style={{width:this.state.pictureBoxDimension, height:undefined, aspectRatio: 1}}
               >
-                  <ImageFilters
-                    width={350}
-                    height={350}
-                    hue={this.state.hue}
-                    sepia={this.state.sepia}
-                    sharpen={this.state.sharpen}
-                    negative={this.state.negative}
-                    saturation={this.state.saturation}
-                    temperature={this.state.temperature}
-                    >
-                      {{uri: this.state.testUri}}
-                  </ImageFilters>
+                <ImageFilters
+                  width={this.state.pictureBoxDimension}
+                  height={this.state.pictureBoxDimension}
+                  aspectRatio={1}
+                  hue={this.state.hue}
+                  sepia={this.state.sepia}
+                  sharpen={this.state.sharpen}
+                  negative={this.state.negative}
+                  saturation={this.state.saturation}
+                  temperature={this.state.temperature}
+                  >
+                    {{uri: this.state.testUri}}
+                </ImageFilters>
               </Surface> :
               <View style={{width: 350, height:350}}>
                 <Image
-                  source={{uri: this.state.testUri, width: 350, height: 350}}
+                  source={{uri: this.state.testUri, width:this.state.pictureBoxDimension, 
+                      height: this.state.pictureBoxDimension}}
                   resizeMode='contain'
-                  style={{flex:1, width: 350, height:350}}
+                  style={{flex:1,}}
                 />
               </View> }
-              <Text style={{textAlign:'center', alignSelf:'center', width: 350, flexWrap:'wrap',
-                  fontFamily: this.state.font,
-                  fontSize: this.state.font==='Fipps-Regular' ? 14 : 20}}>
-                {this.state.memeText}
-              </Text>
+              <View style={{
+                  position:'absolute', bottom:0, right:0, width:35, 
+                  height: 20,backgroundColor: 'aliceblue', zIndex: 1000, opacity: .4,
+                  borderRadius: 3
+                }}>
+                  <Text style={{
+                    fontFamily:'Nathaniel19-Regular', position:'absolute', 
+                    bottom: 0, right: 4, zIndex: 1000, fontSize: 14,
+                    opacity: .4
+                    }}>
+                    loaf
+                  </Text>
+                </View>
+              <View style={{
+                alignItems:'center', justifyContent: 'center', alignSelf:'center',
+                height: Dimensions.get("window").height * .1, 
+                marginVertical: 2,
+              }}>
+                <Text 
+                    adjustsFontSizeToFit={true}
+                    numberOfLines={4}
+                    //maxFontSizeMultiplier={1}
+                    //minimumFontScale={.6}
+                    //lineBreakMode='head'
+                    style={{
+                      textAlign:'center', 
+                      alignSelf:'center', 
+                      justifyContent:'center',
+                      alignItems:'center',
+                      maxHeight: Dimensions.get("window").height * .1,
+                      fontFamily: this.state.font,
+                      fontSize: this.state.font==='Fipps-Regular' ? 14 : 18,
+                    }}>
+                  {this.state.memeText}
+                </Text>
+              </View>
           </ViewShot>}
         </View>
-        <View style={{}}>
-          <Button buttonStyle={{alignSelf:'center', marginVertical:8, width:220}} onPress={this.generate} title={'Generate Meme'} titleStyle={styles.buttonTitleStyle}/>
-          <Button buttonStyle={{alignSelf:'center', marginVertical:8, width:220}} onPress={this.handleSubmitToLeaderboardPress} title={'Submit To Leaderboard'} titleStyle={styles.buttonTitleStyle}/>
-          <Button type='outline' buttonStyle={{alignSelf:'center', marginVertical:8, width:220}} onPress={this.cap} title={'Save To Phone'} titleStyle={styles.buttonTitleStyle}/>
-          <Button type='outline' buttonStyle={{alignSelf:'center', marginVertical:8, width:220}} onPress={this.handleShare} title={'Share External'} titleStyle={styles.buttonTitleStyle}/>
-        </View>
+        <ScrollView
+          >
+          <View style={{flex:1, alignItems: 'center', justifyContent: 'center'}}>
+            <Button buttonStyle={{alignSelf:'center', marginBottom:4, width:220}} onPress={this.generate} title={'Generate Meme'} titleStyle={styles.buttonTitleStyle}/>
+            <Button buttonStyle={{alignSelf:'center', marginVertical:4, width:220}} onPress={this.handleSubmitToLeaderboardPress} title={'Submit To Leaderboard'} titleStyle={styles.buttonTitleStyle}/>
+            <Button type='outline' buttonStyle={{alignSelf:'center', marginVertical:4, width:220}} onPress={this.cap} title={'Save To Phone'} titleStyle={styles.buttonTitleStyle}/>
+            <Button type='outline' buttonStyle={{alignSelf:'center', marginVertical:4, width:220}} onPress={this.handleShare} title={'Share External'} titleStyle={styles.buttonTitleStyle}/>
+          </View>
+        </ScrollView>
         <View style={{bottom:0, alignSelf: 'center'}}>
                 <BannerAd 
                   unitId={adId}
@@ -326,7 +375,6 @@ export default class Generator extends React.Component<Props, State> {
     //Add recent top loaf texts to the markov, weighted. 
     loafs.forEach((loaf: FirebaseFirestoreTypes.QueryDocumentSnapshot) => {
       let loafData = loaf.data();
-      console.log("this loaf's data: #" + loafData.loaf.score + " text:" + loafData.loaf.text)
       if (loafData.loaf.text) {
         for (let i: number = 0; i<loafData.loaf.score; i++) {
           scriptCopy.push(loafData.loaf.text);
@@ -372,7 +420,6 @@ export default class Generator extends React.Component<Props, State> {
       randomNumberForImage = Math.floor(Math.random() * this.state.imageRefArray.items.length);
     }
     const newUri  = await this.state.imageRefArray.items[randomNumberForImage].getDownloadURL();
-    console.log("XXX NEW URI IS: "+ newUri);
     const randomNumberForFont : number = Math.floor(Math.random() * this.state.fontArray.length);
 
     let memeText = this.state.markov.makeChain();
@@ -386,14 +433,15 @@ export default class Generator extends React.Component<Props, State> {
     }
     if (!memeText.endsWith(".")) {memeText += '.'}
     let firstCharUppercase = memeText.charAt(0).toUpperCase() + memeText.slice(1)
-    
+    let font : string= this.state.fontArray[randomNumberForFont];
+    console.log("FONT WAS: " + font);
 
     await this.setState({
       sourceImage: {uri: newUri},
       imageIndex: randomNumberForImage,
       memeText: firstCharUppercase,
       testUri: newUri,
-      font: this.state.fontArray[randomNumberForFont],
+      font: font,
     })
 
     this.applyRandomFilter();
@@ -462,7 +510,7 @@ export default class Generator extends React.Component<Props, State> {
 
   private cap = async () => {
     const uri = await this.refs.viewShot.capture();
-    CameraRoll.save(uri, {album: 'loafs', type: 'photo'});
+    CameraRoll.save(uri, {album: 'Loafs', type: 'photo'});
   }
 
   private capWithoutSave = async () => {
@@ -477,31 +525,5 @@ const styles = StyleSheet.create({
   },
   buttonTitleStyle: {
     fontFamily:'Nathaniel19-Regular', 
-  }
-});
-
-
-const shaders = Shaders.create({
-  Amaro: {
-    frag: GLSL`
-      precision highp float;
-      varying highp vec2 uv;
-      uniform sampler2D inputImageTexture;
-      uniform sampler2D inputImageTexture2;
-      uniform sampler2D inputImageTexture3;
-      uniform sampler2D inputImageTexture4;
-      void main () {
-        vec4 texel = texture2D(inputImageTexture, uv);
-        vec3 bbTexel = texture2D(inputImageTexture2, uv).rgb;
-        texel.r = texture2D(inputImageTexture3, vec2(bbTexel.r, (1.0-texel.r))).r;
-        texel.g = texture2D(inputImageTexture3, vec2(bbTexel.g, (1.0-texel.g))).g;
-        texel.b = texture2D(inputImageTexture3, vec2(bbTexel.b, (1.0-texel.b))).b;
-        vec4 mapped;
-        mapped.r = texture2D(inputImageTexture4, vec2(texel.r, .83333)).r;
-        mapped.g = texture2D(inputImageTexture4, vec2(texel.g, .5)).g;
-        mapped.b = texture2D(inputImageTexture4, vec2(texel.b, .16666)).b;
-        mapped.a = 1.0;
-        gl_FragColor = mapped;
-      }`
   }
 });
