@@ -71,6 +71,7 @@ interface State {
   pictureBoxDimension: number,
   today?: Date,
   week?: Date,
+  hasGeneratedFullMarkov: boolean,
 
   regenerateMarkovAfterCount: number,
   countSinceRegenerateMArkov: number,
@@ -86,6 +87,7 @@ interface Refs {
 
 
 export default class Generator extends React.Component<Props, State> {
+  mounted: boolean;
   public randomWords = require('random-words');
   public refs2 : Refs = {};
   constructor(props: Readonly<Props>) {
@@ -138,15 +140,17 @@ export default class Generator extends React.Component<Props, State> {
        temperature: 6500,
        showNameEntry: false,
        submitPending: false,
-       regenerateMarkovAfterCount: 6,
+       regenerateMarkovAfterCount: 15,
        countSinceRegenerateMArkov: 0,
        testImage: require('../../assets/BmtIdkrCcAAl39D.jpg'),
        pictureBoxDimension: Dimensions.get('window').width * .85,
+       hasGeneratedFullMarkov:false,
     }
   }
 
   public async componentDidMount() {
-    await this.generateMarkov();
+    this.mounted=true;
+    await this.generateMarkovSafely();
     if (Platform.OS === 'android'){
       try {
         const granted = await PermissionsAndroid.request(
@@ -170,6 +174,7 @@ export default class Generator extends React.Component<Props, State> {
         console.warn(err);
       }
     }
+    console.log("finished permissions and safe markov");
 
     // let options = {
     //   apiKey: "AIzaSyCwUzvsBSb6N6i81R23BIWStK4nXNJJYSM",
@@ -192,12 +197,17 @@ export default class Generator extends React.Component<Props, State> {
     var week = new Date(date.setDate(diff));
     console.log("today: "+today+" this week: "+week)
 
-    await this.setState({ 
+    this.setState({ 
       imageRefArray: await firebase.storage().ref().child("loafPics").listAll(),
       today: today,
       week: week
     })
+    console.log("finished setting loafpics")
     await this.generate();
+  }
+
+  public componentWillUnmount() {
+    this.mounted = false;
   }
 
   public render() {
@@ -411,6 +421,7 @@ export default class Generator extends React.Component<Props, State> {
   }
 
   private generateMarkov = async () => {
+    console.log("GENERATING FULL MARKOV!")
     let scriptCopy = script;
 
     let week : Date = new Date();
@@ -439,18 +450,25 @@ export default class Generator extends React.Component<Props, State> {
     })
     const MarkovGen = require('markov-generator');
     this.setState({
-      markov: new MarkovGen({input: scriptCopy, minLength: 3})
+      markov: new MarkovGen({input: scriptCopy, minLength: 3}),
+      hasGeneratedFullMarkov: true
     })
+    console.log("GENERATING FULL MARKOV FINISHED!")
   }
 
-  private generateMarkovSafely = () => {
-    this.setState({
-      markov: new MarkovGen({input: script, minLength: 3})
-    })
+  private generateMarkovSafely = async () => {
+    console.log("SAFE GENERATING MARKOV!")
+    const MarkovGen = require('markov-generator');
+    if (this.mounted){
+      await this.setState({
+        markov: new MarkovGen({input: script, minLength: 3})
+      })
+    }
+    console.log("SAFE GENERATING MARKOV FINISHED!")
   }
 
   private regenerateMarkovIfNeeded = async () => {
-    if (this.state.countSinceRegenerateMArkov === this.state.regenerateMarkovAfterCount) {
+    if (this.state.countSinceRegenerateMArkov === this.state.regenerateMarkovAfterCount && this.mounted) {
       try{
         await this.generateMarkov();
       }
@@ -462,7 +480,7 @@ export default class Generator extends React.Component<Props, State> {
       }
     }
     this.setState({
-      countSinceRegenerateMArkov : this.state.countSinceRegenerateMArkov+1
+      countSinceRegenerateMArkov : this.state.countSinceRegenerateMArkov+1,
     })
   }
 
@@ -475,24 +493,25 @@ export default class Generator extends React.Component<Props, State> {
     if (randomNumberForImage == this.state.imageIndex) {
       randomNumberForImage = Math.floor(Math.random() * this.state.imageRefArray.items.length);
     }
+    if (!this.mounted) return;
     const newUri  = await this.state.imageRefArray.items[randomNumberForImage].getDownloadURL();
     const randomNumberForFont : number = Math.floor(Math.random() * this.state.fontArray.length);
 
     let memeText = this.state.markov.makeChain();
     const numWords = memeText.split(" ").length;
-    if (numWords > 6) {
+    if (numWords > 10) {
       memeText = this.replaceRandomWordWithBuzzWord(memeText, numWords);
       memeText = this.replaceRandomWordWithBuzzWord(memeText, numWords);
     }
-    else {
+    else if (numWords > 3){
       memeText = this.replaceRandomWordWithBuzzWord(memeText, numWords);
     }
     if (!(memeText.endsWith(".")||memeText.endsWith("?")||memeText.endsWith("!"))) {memeText += '.'}
     let firstCharUppercase = memeText.charAt(0).toUpperCase() + memeText.slice(1)
     let font : string= this.state.fontArray[randomNumberForFont];
     console.log("FONT WAS: " + font);
-    console.log("testUri was: " + newUri);
 
+    if (!this.mounted) return;
     await this.setState({
       sourceImage: {uri: newUri},
       imageIndex: randomNumberForImage,
@@ -501,8 +520,12 @@ export default class Generator extends React.Component<Props, State> {
       font: font,
     })
 
+    if (!this.mounted) return;
     this.applyRandomFilter();
     this.setState({imageLoading: false})
+    if (!this.state.hasGeneratedFullMarkov) {
+      this.generateMarkov();
+    }
   }
 
   private applyRandomFilter = () => {
