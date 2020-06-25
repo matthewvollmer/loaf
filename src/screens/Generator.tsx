@@ -253,7 +253,10 @@ export default class Generator extends React.Component<Props, State> {
             onCapture={(uri: any) => this.onCapture(uri)}>
               {Platform.OS === 'android' ? 
               <Surface
-                style={{width:this.state.pictureBoxDimension, height:undefined, aspectRatio: 1}}
+                style={{
+                  width:this.state.pictureBoxDimension, 
+                  height:undefined, 
+                  aspectRatio: 1,}}
               >
                 <ImageFilters
                   width={this.state.pictureBoxDimension}
@@ -300,7 +303,7 @@ export default class Generator extends React.Component<Props, State> {
                     adjustsFontSizeToFit={true}
                     numberOfLines={4}
                     //maxFontSizeMultiplier={1}
-                    //minimumFontScale={.6}
+                    minimumFontScale={.8}
                     //lineBreakMode='head'
                     style={{
                       textAlign:'center', 
@@ -416,12 +419,21 @@ export default class Generator extends React.Component<Props, State> {
     var diff = week.getDate() - day  + (day == 0 ? -6:1)
     var weekstart = new Date(week.setDate(diff));
     let loafs = await (await getLoafs()).where('loaf.week', '==', weekstart).orderBy('loaf.score', 'desc').limit(15).get();
+    let topAllTimeLoafs = await (await getLoafs()).orderBy('loaf.score', 'desc').limit(8).get();
 
     loafs.forEach((loaf: FirebaseFirestoreTypes.QueryDocumentSnapshot) => {
       let loafData = loaf.data();
       if (loafData.loaf.text) {
         for (let i: number = 0; i<loafData.loaf.score; i++) {
           scriptCopy.push(loafData.loaf.text);
+        }
+      }
+    })
+    topAllTimeLoafs.forEach((topAllTimeLoaf: FirebaseFirestoreTypes.QueryDocumentSnapshot) => {
+      let topAllTimeLoafData = topAllTimeLoaf.data();
+      if (topAllTimeLoafData.loaf.text) {
+        for (let i: number = 0; i<topAllTimeLoafData.loaf.score; i++) {
+          scriptCopy.push(topAllTimeLoafData.loaf.text);
         }
       }
     })
@@ -475,10 +487,11 @@ export default class Generator extends React.Component<Props, State> {
     else {
       memeText = this.replaceRandomWordWithBuzzWord(memeText, numWords);
     }
-    if (!memeText.endsWith(".")) {memeText += '.'}
+    if (!(memeText.endsWith(".")||memeText.endsWith("?")||memeText.endsWith("!"))) {memeText += '.'}
     let firstCharUppercase = memeText.charAt(0).toUpperCase() + memeText.slice(1)
     let font : string= this.state.fontArray[randomNumberForFont];
     console.log("FONT WAS: " + font);
+    console.log("testUri was: " + newUri);
 
     await this.setState({
       sourceImage: {uri: newUri},

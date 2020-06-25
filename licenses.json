@@ -1,0 +1,178 @@
+{
+    "@react-native-community/cameraroll@1.7.2": {
+        "licenses": "MIT",
+        "repository": "https://github.com/react-native-community/react-native-cameraroll",
+        "licenseUrl": "https://github.com/react-native-community/react-native-cameraroll/raw/master/LICENCE",
+        "parents": "loaf"
+    },
+    "@react-native-community/masked-view@0.1.10": {
+        "licenses": "MIT",
+        "repository": "https://github.com/react-native-community/react-native-masked-view",
+        "licenseUrl": "https://github.com/react-native-community/react-native-masked-view",
+        "parents": "loaf"
+    },
+    "@react-native-community/picker@1.6.3": {
+        "licenses": "MIT",
+        "repository": "https://github.com/react-native-community/react-native-picker",
+        "licenseUrl": "https://github.com/react-native-community/react-native-picker/raw/master/LICENSE",
+        "parents": "loaf"
+    },
+    "@react-native-firebase/admob@7.2.0": {
+        "licenses": "Apache-2.0",
+        "repository": "https://github.com/invertase/react-native-firebase/tree/master/packages/admob",
+        "licenseUrl": "https://github.com/invertase/react-native-firebase/tree/master/packages/admob/raw/master/LICENSE",
+        "parents": "loaf"
+    },
+    "@react-native-firebase/app@7.2.1": {
+        "licenses": "Apache-2.0",
+        "repository": "https://github.com/invertase/react-native-firebase/tree/master/packages/app",
+        "licenseUrl": "https://github.com/invertase/react-native-firebase/tree/master/packages/app/raw/master/LICENSE",
+        "parents": "loaf"
+    },
+    "@react-native-firebase/firestore@7.1.7": {
+        "licenses": "Apache-2.0",
+        "repository": "https://github.com/invertase/react-native-firebase/tree/master/packages/firestore",
+        "licenseUrl": "https://github.com/invertase/react-native-firebase/tree/master/packages/firestore/raw/master/LICENSE",
+        "parents": "loaf"
+    },
+    "@react-native-firebase/storage@7.1.4": {
+        "licenses": "Apache-2.0",
+        "repository": "https://github.com/invertase/react-native-firebase/tree/master/packages/storage",
+        "licenseUrl": "https://github.com/invertase/react-native-firebase/tree/master/packages/storage/raw/master/LICENSE",
+        "parents": "loaf"
+    },
+    "@react-navigation/native@5.5.1": {
+        "licenses": "MIT",
+        "repository": "https://github.com/react-navigation/react-navigation/tree/master/packages/native",
+        "licenseUrl": "https://github.com/react-navigation/react-navigation/tree/master/packages/native/raw/master/LICENSE",
+        "parents": "loaf"
+    },
+    "@react-navigation/stack@5.5.1": {
+        "licenses": "MIT",
+        "repository": "https://github.com/react-navigation/react-navigation/tree/master/packages/stack",
+        "licenseUrl": "https://github.com/react-navigation/react-navigation/tree/master/packages/stack/raw/master/LICENSE",
+        "parents": "loaf"
+    },
+    "buffer@5.6.0": {
+        "licenses": "MIT",
+        "repository": "https://github.com/feross/buffer",
+        "licenseUrl": "https://github.com/feross/buffer/raw/master/LICENSE",
+        "parents": "loaf"
+    },
+    "deprecated-react-native-listview@0.0.6": {
+        "licenses": "BSD-3-Clause",
+        "repository": "https://github.com/facebookarchive/react-native-deprecated-modules",
+        "licenseUrl": "https://github.com/facebookarchive/react-native-deprecated-modules",
+        "parents": "loaf"
+    },
+    "gl-react-native@4.0.1": {
+        "licenses": "MIT",
+        "parents": "loaf"
+    },
+    "gl-react@4.0.1": {
+        "licenses": "MIT",
+        "parents": "loaf"
+    },
+    "markov-generator@1.2.2": {
+        "licenses": "ISC",
+        "repository": "https://github.com/maximumdata/markov-generator",
+        "licenseUrl": "https://github.com/maximumdata/markov-generator",
+        "parents": "loaf"
+    },
+    "random-words@1.1.1": {
+        "licenses": "MIT",
+        "repository": "https://github.com/punkave/random-words",
+        "licenseUrl": "https://github.com/punkave/random-words/raw/master/LICENSE",
+        "parents": "loaf"
+    },
+    "react-native-dropdown-picker@3.0.5": {
+        "licenses": "MIT",
+        "repository": "https://github.com/hossein-zare/react-native-dropdown-picker",
+        "licenseUrl": "https://github.com/hossein-zare/react-native-dropdown-picker/raw/master/LICENSE",
+        "parents": "loaf"
+    },
+    "react-native-elements@2.0.2": {
+        "licenses": "MIT",
+        "repository": "https://github.com/react-native-elements/react-native-elements",
+        "licenseUrl": "https://github.com/react-native-elements/react-native-elements/raw/master/LICENSE",
+        "parents": "loaf"
+    },
+    "react-native-gesture-handler@1.6.1": {
+        "licenses": "MIT",
+        "repository": "https://github.com/software-mansion/react-native-gesture-handler",
+        "licenseUrl": "https://github.com/software-mansion/react-native-gesture-handler/raw/master/LICENSE",
+        "parents": "loaf"
+    },
+    "react-native-gl-image-filters@0.1.1": {
+        "licenses": "MIT",
+        "repository": "https://github.com/GregoryNative/react-native-gl-image-filters",
+        "licenseUrl": "https://github.com/GregoryNative/react-native-gl-image-filters/raw/master/LICENSE",
+        "parents": "loaf"
+    },
+    "react-native-modal-dropdown@0.7.0": {
+        "licenses": "MIT",
+        "repository": "https://github.com/sohobloo/react-native-modal-dropdown",
+        "licenseUrl": "https://github.com/sohobloo/react-native-modal-dropdown/raw/master/LICENSE",
+        "parents": "loaf"
+    },
+    "react-native-modal@11.5.6": {
+        "licenses": "MIT",
+        "repository": "https://github.com/react-native-community/react-native-modal",
+        "licenseUrl": "https://github.com/react-native-community/react-native-modal/raw/master/LICENSE.md",
+        "parents": "loaf"
+    },
+    "react-native-reanimated@1.9.0": {
+        "licenses": "MIT",
+        "repository": "https://github.com/software-mansion/react-native-reanimated",
+        "licenseUrl": "https://github.com/software-mansion/react-native-reanimated/raw/master/LICENSE",
+        "parents": "loaf"
+    },
+    "react-native-safe-area-context@3.0.5": {
+        "licenses": "MIT",
+        "repository": "https://github.com/th3rdwave/react-native-safe-area-context",
+        "licenseUrl": "https://github.com/th3rdwave/react-native-safe-area-context/raw/master/LICENSE",
+        "parents": "loaf"
+    },
+    "react-native-screens@2.8.0": {
+        "licenses": "MIT",
+        "repository": "https://github.com/kmagiera/react-native-screens",
+        "licenseUrl": "https://github.com/kmagiera/react-native-screens/raw/master/LICENSE",
+        "parents": "loaf"
+    },
+    "react-native-share@3.3.3": {
+        "licenses": "MIT",
+        "repository": "https://github.com/react-native-community/react-native-share",
+        "licenseUrl": "https://github.com/react-native-community/react-native-share/raw/master/LICENSE",
+        "parents": "loaf"
+    },
+    "react-native-unimodules@0.10.1": {
+        "licenses": "MIT",
+        "repository": "https://github.com/expo/expo",
+        "licenseUrl": "https://github.com/expo/expo/raw/master/LICENSE.md",
+        "parents": "loaf"
+    },
+    "react-native-vector-icons@6.6.0": {
+        "licenses": "MIT",
+        "repository": "https://github.com/oblador/react-native-vector-icons",
+        "licenseUrl": "https://github.com/oblador/react-native-vector-icons/raw/master/LICENSE",
+        "parents": "loaf"
+    },
+    "react-native-view-shot@3.1.2": {
+        "licenses": "MIT",
+        "repository": "https://github.com/gre/react-native-view-shot",
+        "licenseUrl": "https://github.com/gre/react-native-view-shot/raw/master/LICENSE",
+        "parents": "loaf"
+    },
+    "react-native@0.62.2": {
+        "licenses": "MIT",
+        "repository": "https://github.com/facebook/react-native",
+        "licenseUrl": "https://github.com/facebook/react-native/raw/master/LICENSE",
+        "parents": "loaf"
+    },
+    "react@16.11.0": {
+        "licenses": "MIT",
+        "repository": "https://github.com/facebook/react",
+        "licenseUrl": "https://github.com/facebook/react/raw/master/LICENSE",
+        "parents": "loaf"
+    }
+}
