@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -39,15 +41,12 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Loaf will only use Photo Library permissions to save photos</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Loaf will only use Photo Library permissions to save photos</string>
 	<key>UIAppFonts</key>
 	<array>
-		<string>vanillawhale.ttf</string>
-		<string>Retro_Stereo_Wide.ttf</string>
-		<string>firewood.ttf</string>
-		<string>Fipps-Regular.otf</string>
-		<string>gomarice_tanomuze_cowboy.ttf</string>
-		<string>BatmanBeatthehellOuttaMe.ttf</string>
-		<string>BoyzRGross.ttf</string>
 		<string>AntDesign.ttf</string>
 		<string>Entypo.ttf</string>
 		<string>EvilIcons.ttf</string>
@@ -64,8 +63,19 @@
 		<string>Octicons.ttf</string>
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
+		<string>BoyzRGross.ttf</string>
 		<string>aAlloyInk.otf</string>
+		<string>Fipps-Regular.otf</string>
+		<string>firewood.ttf</string>
+		<string>Retro_Stereo_Wide.ttf</string>
+		<string>vanillawhale.ttf</string>
+		<string>BatmanBeatthehellOuttaMe.ttf</string>
+		<string>gomarice_tanomuze_cowboy.ttf</string>
 		<string>Nathaniel19-Regular.otf</string>
+		<string>KOMTITK_.ttf</string>
+		<string>StrangerThings-Regular.ttf</string>
+		<string>aAhaWow.ttf</string>
+		<string>AirAmericana.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

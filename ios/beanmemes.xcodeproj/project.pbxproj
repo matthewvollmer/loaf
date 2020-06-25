@@ -34,6 +34,10 @@
 		BB188126249833FD008D87DA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB188123249833FD008D87DA /* GoogleService-Info.plist */; };
 		BB188127249833FD008D87DA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB188123249833FD008D87DA /* GoogleService-Info.plist */; };
 		BBC59BB724A2B6A1001EB7E4 /* libEXGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC59BB624A2B6A1001EB7E4 /* libEXGL.a */; };
+		BBC59BBC24A47639001EB7E4 /* AirAmericana.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BBC59BB824A47638001EB7E4 /* AirAmericana.ttf */; };
+		BBC59BBD24A47639001EB7E4 /* aAhaWow.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BBC59BB924A47638001EB7E4 /* aAhaWow.ttf */; };
+		BBC59BBE24A47639001EB7E4 /* StrangerThings-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BBC59BBA24A47638001EB7E4 /* StrangerThings-Regular.ttf */; };
+		BBC59BBF24A47639001EB7E4 /* KOMTITK_.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BBC59BBB24A47639001EB7E4 /* KOMTITK_.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -97,6 +101,10 @@
 		BB188123249833FD008D87DA /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BB5553A18E77B1E7EB94CEFB /* Pods-beanmemes-beanmemesTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-beanmemes-beanmemesTests.release.xcconfig"; path = "Target Support Files/Pods-beanmemes-beanmemesTests/Pods-beanmemes-beanmemesTests.release.xcconfig"; sourceTree = "<group>"; };
 		BBC59BB624A2B6A1001EB7E4 /* libEXGL.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libEXGL.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BBC59BB824A47638001EB7E4 /* AirAmericana.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = AirAmericana.ttf; path = ../assets/fonts/AirAmericana.ttf; sourceTree = "<group>"; };
+		BBC59BB924A47638001EB7E4 /* aAhaWow.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = aAhaWow.ttf; path = ../assets/fonts/aAhaWow.ttf; sourceTree = "<group>"; };
+		BBC59BBA24A47638001EB7E4 /* StrangerThings-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "StrangerThings-Regular.ttf"; path = "../assets/fonts/StrangerThings-Regular.ttf"; sourceTree = "<group>"; };
+		BBC59BBB24A47639001EB7E4 /* KOMTITK_.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = KOMTITK_.ttf; path = ../assets/fonts/KOMTITK_.ttf; sourceTree = "<group>"; };
 		C01ABEB5CB224584A97512B8 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		C038E7F3989A4BEE9A3CB6EC /* Pods-beanmemes-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-beanmemes-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-beanmemes-tvOS/Pods-beanmemes-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		C2A6E22F059B4733AC1E83C3 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
@@ -124,8 +132,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BBC59BB724A2B6A1001EB7E4 /* libEXGL.a in Frameworks */,
 				48FE2D2C7B0E294BCB602536 /* libPods-beanmemes.a in Frameworks */,
+				BBC59BB724A2B6A1001EB7E4 /* libEXGL.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -243,6 +251,10 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				BBC59BB924A47638001EB7E4 /* aAhaWow.ttf */,
+				BBC59BB824A47638001EB7E4 /* AirAmericana.ttf */,
+				BBC59BBB24A47639001EB7E4 /* KOMTITK_.ttf */,
+				BBC59BBA24A47638001EB7E4 /* StrangerThings-Regular.ttf */,
 				BB0B7CA0249D8EE4002477FB /* BatmanBeatthehellOuttaMe.ttf */,
 				BB0B7CA4249D8EE5002477FB /* BoyzRGross.ttf */,
 				BB0B7CA2249D8EE4002477FB /* Fipps-Regular.otf */,
@@ -422,15 +434,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				BB0B7CA7249D8EE6002477FB /* gomarice_tanomuze_cowboy.ttf in Resources */,
+				BBC59BBE24A47639001EB7E4 /* StrangerThings-Regular.ttf in Resources */,
 				BB0B7CAA249D8EE6002477FB /* Fipps-Regular.otf in Resources */,
 				BB0B7CAC249D8EE6002477FB /* BoyzRGross.ttf in Resources */,
 				BB0B7CAD249D8EE6002477FB /* Nathaniel19-Regular.otf in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				BBC59BBC24A47639001EB7E4 /* AirAmericana.ttf in Resources */,
 				BB0B7CA8249D8EE6002477FB /* BatmanBeatthehellOuttaMe.ttf in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				BB188124249833FD008D87DA /* GoogleService-Info.plist in Resources */,
+				BBC59BBF24A47639001EB7E4 /* KOMTITK_.ttf in Resources */,
 				BB0B7CAE249D8EE6002477FB /* vanillawhale.ttf in Resources */,
 				BB0B7CAB249D8EE6002477FB /* Retro_Stereo_Wide.ttf in Resources */,
+				BBC59BBD24A47639001EB7E4 /* aAhaWow.ttf in Resources */,
 				8399EB3C9B434FBA93177D9B /* aAlloyInk.otf in Resources */,
 				BB0B7CA9249D8EE6002477FB /* firewood.ttf in Resources */,
 			);

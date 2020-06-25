@@ -109,8 +109,7 @@ class Leaderboard extends React.Component<Props, State> {
               <ActivityIndicator size='large' style={{alignSelf:'center'}} color='white'></ActivityIndicator>
             </Modal>
             <FlatList
-              data={this.state.sortingMode!=='newest' ? this.state.loafs.sort((a,b)=> b.score-a.score) : 
-                    this.state.loafs}
+              data={this.state.loafs}
               ListHeaderComponentStyle={{zIndex: 999}}
               ListHeaderComponent={
               // <DropDownPicker
@@ -137,7 +136,7 @@ class Leaderboard extends React.Component<Props, State> {
                   justifyContent:'center', backgroundColor:'white'
 
                  }}
-                options={['Newest', 'Top This Week', 'Top All Time', 'Top Today']}
+                options={['Newest', 'Top Today', 'Top This Week', 'Top All Time']}
                 dropdownStyle={{alignSelf: 'center',width:'60%', height:135}}
                 onSelect={(idx, value) => this.handleChangeSortMethod(value)}
                 defaultValue="Newest"
@@ -249,16 +248,19 @@ class Leaderboard extends React.Component<Props, State> {
             await (await getLoafs()).orderBy('loaf.date', 'desc').limit(this.state.loafCount).get();
           break;
         case('Top Today') : 
-          let yesterday = new Date();
-          yesterday.setDate(yesterday.getDate()-1);
-          loafs = this.state.startAt ? await (await getLoafs()).where('loaf.date', '>', yesterday).startAfter(this.state.startAt).limit(this.state.loafCount).get() :
-            await (await getLoafs()).where('loaf.date', '>', yesterday).limit(this.state.loafCount).get();
+          let today : Date = new Date();
+          today.setHours(0,0,0,0);
+          loafs = this.state.startAt ? await (await getLoafs()).where('loaf.day', '==', today).orderBy('loaf.score', 'desc').startAfter(this.state.startAt).limit(this.state.loafCount).get() :
+            await (await getLoafs()).where('loaf.day', '==', today).orderBy('loaf.score', 'desc').limit(this.state.loafCount).get();
           break;
         case('Top This Week') : 
-          let lastWeek = new Date();
-          lastWeek.setDate(lastWeek.getDate()-7);
-          loafs = this.state.startAt ? await (await getLoafs()).where('loaf.date', '>', lastWeek).startAfter(this.state.startAt).limit(this.state.loafCount).get() :
-            await (await getLoafs()).where('loaf.date', '>', lastWeek).limit(this.state.loafCount).get();
+          let week : Date = new Date();
+          week.setHours(0,0,0,0);
+          var day = week.getDay()
+          var diff = week.getDate() - day  + (day == 0 ? -6:1)
+          var weekstart = new Date(week.setDate(diff));
+          loafs = this.state.startAt ? await (await getLoafs()).where('loaf.week', '==', weekstart).orderBy('loaf.score', 'desc').startAfter(this.state.startAt).limit(this.state.loafCount).get() :
+            await (await getLoafs()).where('loaf.week', '==', weekstart).orderBy('loaf.score', 'desc').limit(this.state.loafCount).get();
           break;
         case('Top All Time') : 
           loafs = this.state.startAt ? await (await getLoafs()).orderBy('loaf.score', 'desc').startAfter(this.state.startAt).limit(this.state.loafCount).get() :

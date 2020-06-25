@@ -69,6 +69,8 @@ interface State {
   markov?: MarkovGen,
   testImage: ImageSourcePropType,
   pictureBoxDimension: number,
+  today?: Date,
+  week?: Date,
 
   regenerateMarkovAfterCount: number,
   countSinceRegenerateMArkov: number,
@@ -95,7 +97,9 @@ export default class Generator extends React.Component<Props, State> {
       memeText: '',
        imageLoading: true,
        font: 'aAlloyInk',
-       fontArray: [
+       fontArray: 
+       Platform.OS === 'android' ?
+       [
           'aAlloyInk',
           'monospace',
           'Nathaniel19-Regular',
@@ -107,7 +111,22 @@ export default class Generator extends React.Component<Props, State> {
           'gomarice_tanomuze_cowboy',
           'Retro_Stereo_Wide',
           'vanillawhale'
-       ],
+       ] : 
+       [
+        'aAlloyInk',
+        // 'monospace',
+        'Nathaniel19-Regular',
+        'Fipps-Regular',
+        'aAhaWow',
+        // 'KOMTITK_',
+        'StrangerThings-Regular',
+        'AirAmericana',
+        'Helvetica-Bold',
+        'MalayalamSangamMN',
+        'Papyrus',
+        'Thonburi',
+        'Zapfino'
+     ],
        buzzwords: buzzwords,
        hue: 0,
        blur: 0,
@@ -150,8 +169,6 @@ export default class Generator extends React.Component<Props, State> {
       } catch (err) {
         console.warn(err);
       }
-
-      console.log("Totaly screen height is: " + Dimensions.get("window").height + " .1 is: "+Dimensions.get("window").height*.1);
     }
 
     // let options = {
@@ -164,8 +181,22 @@ export default class Generator extends React.Component<Props, State> {
     // }
     // !firebase.apps.length ? firebase.initializeApp(options) : firebase.app();
 
+    var today = new Date();
+    today.setHours(0,0,0,0);
 
-    await this.setState({ imageRefArray: await firebase.storage().ref().child("loafPics").listAll()})
+    var date = new Date();
+    date.setHours(0,0,0,0);
+    var day = date.getDay()
+    var diff = date.getDate() - day  + (day == 0 ? -6:1)
+  
+    var week = new Date(date.setDate(diff));
+    console.log("today: "+today+" this week: "+week)
+
+    await this.setState({ 
+      imageRefArray: await firebase.storage().ref().child("loafPics").listAll(),
+      today: today,
+      week: week
+    })
     await this.generate();
   }
 
@@ -238,27 +269,28 @@ export default class Generator extends React.Component<Props, State> {
                     {{uri: this.state.testUri}}
                 </ImageFilters>
               </Surface> :
-              <View style={{width: 350, height:350}}>
+              <View style={{width:this.state.pictureBoxDimension, height:undefined, aspectRatio: 1}}>
                 <Image
                   source={{uri: this.state.testUri, width:this.state.pictureBoxDimension, 
                       height: this.state.pictureBoxDimension}}
                   resizeMode='contain'
                   style={{flex:1,}}
                 />
-              </View> }
+              </View> 
+              }
               <View style={{
                   position:'absolute', bottom:0, right:0, width:35, 
                   height: 20,backgroundColor: 'aliceblue', zIndex: 1000, opacity: .4,
                   borderRadius: 3
                 }}>
-                  <Text style={{
-                    fontFamily:'Nathaniel19-Regular', position:'absolute', 
-                    bottom: 0, right: 4, zIndex: 1000, fontSize: 14,
-                    opacity: .4
-                    }}>
-                    loaf
-                  </Text>
-                </View>
+                <Text style={{
+                  fontFamily:'Nathaniel19-Regular', position:'absolute', 
+                  bottom: 0, right: 4, zIndex: 1000, fontSize: 14,
+                  opacity: .4
+                  }}>
+                  loaf
+                </Text>
+              </View>
               <View style={{
                 alignItems:'center', justifyContent: 'center', alignSelf:'center',
                 height: Dimensions.get("window").height * .1, 
@@ -282,6 +314,7 @@ export default class Generator extends React.Component<Props, State> {
                   {this.state.memeText}
                 </Text>
               </View>
+
           </ViewShot>}
         </View>
         <ScrollView
@@ -339,13 +372,23 @@ export default class Generator extends React.Component<Props, State> {
 
   private handleSubmitToLeaderboard = async () => {
     this.setState({submitPending: true})
+    var today = new Date();
+    today.setHours(0,0,0,0);
+
+    var date = new Date();
+    var day = date.getDay()
+    var diff = date.getDate() - day  + (day == 0 ? -6:1)
+
+    var week = new Date(date.setDate(diff));
     await this.capWithoutSave();
     await createLoaf(
       {
         creator: this.state.loaferName, 
         date: new Date(), 
         score: 1,
-        text: this.state.memeText
+        text: this.state.memeText,
+        day: this.state.today,
+        week: this.state.week,
       },
       this.state.captureUri);
     this.setState({showNameEntry: false, submitPending: false});
@@ -366,13 +409,14 @@ export default class Generator extends React.Component<Props, State> {
 
   private generateMarkov = async () => {
     let scriptCopy = script;
-    let lastWeek = new Date();
-    //Calculate last week
-    lastWeek.setDate(lastWeek.getDate()-7);
-    //Pull in top loafs of last week
-    let loafs : FirebaseFirestoreTypes.QuerySnapshot = 
-      await (await getLoafs()).where('loaf.date', '>', lastWeek).limit(12).get();
-    //Add recent top loaf texts to the markov, weighted. 
+
+    let week : Date = new Date();
+    week.setHours(0,0,0,0);
+    var day = week.getDay()
+    var diff = week.getDate() - day  + (day == 0 ? -6:1)
+    var weekstart = new Date(week.setDate(diff));
+    let loafs = await (await getLoafs()).where('loaf.week', '==', weekstart).orderBy('loaf.score', 'desc').limit(15).get();
+
     loafs.forEach((loaf: FirebaseFirestoreTypes.QueryDocumentSnapshot) => {
       let loafData = loaf.data();
       if (loafData.loaf.text) {
@@ -510,7 +554,9 @@ export default class Generator extends React.Component<Props, State> {
 
   private cap = async () => {
     const uri = await this.refs.viewShot.capture();
+    console.log("captured uri was: " + uri);
     CameraRoll.save(uri, {album: 'Loafs', type: 'photo'});
+    //CameraRoll.save(uri, {album: 'Loafs', type: 'photo'});
   }
 
   private capWithoutSave = async () => {

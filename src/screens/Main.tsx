@@ -35,7 +35,7 @@ class Main extends React.Component<Props, State> {
     admob()
       .setRequestConfiguration({
         // Update all future requests suitable for parental guidance
-        maxAdContentRating: MaxAdContentRating.G,
+        maxAdContentRating: MaxAdContentRating.PG,
 
         // Indicates that you want your content treated as child-directed for purposes of COPPA.
         tagForChildDirectedTreatment: false,
