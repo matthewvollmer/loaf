@@ -80,6 +80,8 @@ interface State {
   countSinceRegenerateMArkov: number,
 
   permissionsAlreadyGranted: boolean,
+  calculatedButtonHeight: number,
+  calculatedButtonGap: number
 }
 
 interface Props {
@@ -148,9 +150,12 @@ export default class Generator extends React.Component<Props, State> {
        regenerateMarkovAfterCount: 15,
        countSinceRegenerateMArkov: 0,
        testImage: require('../../assets/BmtIdkrCcAAl39D.jpg'),
-       pictureBoxDimension: Dimensions.get('window').width * .85,
+       pictureBoxDimension: Dimensions.get('window').height < 670 ? Dimensions.get('window').width * .8 : Dimensions.get('window').width * .85,
        hasGeneratedFullMarkov:false,
        permissionsAlreadyGranted: false,
+
+       calculatedButtonHeight: Dimensions.get('window').height < 670 ? 28 : 38,
+       calculatedButtonGap: Dimensions.get('window').height < 670 ? 2 : 4
     }
   }
 
@@ -158,7 +163,7 @@ export default class Generator extends React.Component<Props, State> {
     this.mounted=true;
     await this.generateMarkovSafely();
     console.log("finished permissions and safe markov");
-
+    console.log("Platform Version: " + Platform.Version);
     // let options = {
     //   apiKey: "AIzaSyCwUzvsBSb6N6i81R23BIWStK4nXNJJYSM",
     //   //authDomain: "<your-auth-domain>",
@@ -193,6 +198,11 @@ export default class Generator extends React.Component<Props, State> {
     this.mounted = false;
   }
 
+  public hideNameEntry = () => {
+    console.log("hide name entry has been called! ")
+    this.setState({showNameEntry: false});
+  }
+
   public render() {
     const adId = __DEV__ ?  TestIds.BANNER : "ca-app-pub-9855234796425536/6028942568";
     return  (
@@ -206,8 +216,10 @@ export default class Generator extends React.Component<Props, State> {
               <ActivityIndicator size='large' style={{alignSelf:'center'}} color='white'></ActivityIndicator>
             </Modal>
         <Modal isVisible={this.state.showNameEntry}
-          onBackButtonPress={() => this.setState({showNameEntry: false})}
-          onBackdropPress={() => this.setState({showNameEntry: false})}
+          onBackButtonPress={this.hideNameEntry}
+          onBackdropPress={this.hideNameEntry}
+          avoidKeyboard={false}
+          coverScreen={false}
         >
           <View style={{backgroundColor:'white', borderRadius: 12, 
               alignSelf: 'center', justifyContent:'flex-start'}}>
@@ -217,6 +229,7 @@ export default class Generator extends React.Component<Props, State> {
               label='Loafer' labelStyle={styles.buttonTitleStyle} inputStyle={styles.buttonTitleStyle}
               value={this.state.loaferName}
               onChangeText={(text) => this.setState({loaferName: text})}
+
               />
             <Button 
               buttonStyle={{width: 200, alignSelf: 'center', marginBottom: 24}}
@@ -244,7 +257,7 @@ export default class Generator extends React.Component<Props, State> {
             style={{backgroundColor: 'white', borderColor: 'black', borderRadius: 4, borderWidth: 2}}
             options={{format:'jpg', quality:.2}}
             onCapture={(uri: any) => this.onCapture(uri)}>
-              {Platform.OS === 'android' ? 
+              {Platform.OS === 'android' && Platform.Version > 24 ? 
               <Surface
                 style={{
                   width:this.state.pictureBoxDimension, 
@@ -316,10 +329,18 @@ export default class Generator extends React.Component<Props, State> {
         <ScrollView
           >
           <View style={{flex:1, alignItems: 'center', justifyContent: 'center'}}>
-            <Button buttonStyle={{alignSelf:'center', marginBottom:4, width:220}} onPress={this.generate} title={'Generate Meme'} titleStyle={styles.buttonTitleStyle}/>
-            <Button buttonStyle={{alignSelf:'center', marginVertical:4, width:220}} onPress={this.handleSubmitToLeaderboardPress} title={'Submit To Leaderboard'} titleStyle={styles.buttonTitleStyle}/>
-            <Button type='outline' buttonStyle={{alignSelf:'center', marginVertical:4, width:220}} onPress={this.cap} title={'Save To Phone'} titleStyle={styles.buttonTitleStyle}/>
-            <Button type='outline' buttonStyle={{alignSelf:'center', marginVertical:4, width:220}} onPress={this.handleShare} title={'Share External'} titleStyle={styles.buttonTitleStyle}/>
+            <Button buttonStyle={{alignSelf:'center', marginBottom:this.state.calculatedButtonGap, width:220, 
+              height:this.state.calculatedButtonHeight}} 
+              onPress={this.generate} title={'Generate Meme'} titleStyle={styles.buttonTitleStyle}/>
+            <Button buttonStyle={{alignSelf:'center', marginVertical:this.state.calculatedButtonGap, width:220, 
+              height:this.state.calculatedButtonHeight}} 
+              onPress={this.handleSubmitToLeaderboardPress} title={'Submit To Leaderboard'} titleStyle={styles.buttonTitleStyle}/>
+            <Button type='outline' buttonStyle={{alignSelf:'center', marginVertical:this.state.calculatedButtonGap, width:220, 
+              height:this.state.calculatedButtonHeight}} 
+              onPress={this.cap} title={'Save To Phone'} titleStyle={styles.buttonTitleStyle}/>
+            <Button type='outline' buttonStyle={{alignSelf:'center', marginVertical:this.state.calculatedButtonGap, width:220, 
+              height:this.state.calculatedButtonHeight}} 
+              onPress={this.handleShare} title={'Share External'} titleStyle={styles.buttonTitleStyle}/>
           </View>
         </ScrollView>
         <View style={{bottom:0, alignSelf: 'center'}}>
@@ -399,10 +420,12 @@ export default class Generator extends React.Component<Props, State> {
   }
 
   private handleSubmitToLeaderboardPress = () => {
+    console.log("handling submit to leaderboard button press")
     this.setState({showNameEntry: true});
   }
 
   private handleSubmitToLeaderboard = async () => {
+    console.log("submit has been pressed!")
     this.setState({submitPending: true})
     var today = new Date();
     today.setHours(0,0,0,0);
