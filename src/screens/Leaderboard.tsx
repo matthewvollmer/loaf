@@ -1,19 +1,14 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Image, ImageSourcePropType, FlatList, PermissionsAndroid, ActivityIndicator, ToastAndroid, Platform} from 'react-native';
+import { StyleSheet, View, Image, ImageSourcePropType, FlatList, ActivityIndicator, ToastAndroid} from 'react-native';
 import { Button, Text } from 'react-native-elements'
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../App';
-import { Loaf } from '../data/types';
-import { getLoafs, getUserLoafRef, getLoafImageUrl, likeLoaf } from '../data/loafs';
-import ImageFilters from 'react-native-gl-image-filters';
-import { Surface } from 'gl-react-native';
+import { getLoafs, getLoafImageUrl, likeLoaf } from '../data/loafs';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Modal from 'react-native-modal'
 import Share from 'react-native-share';
-import {Picker} from '@react-native-community/picker';
 import { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
-import DropDownPicker from 'react-native-dropdown-picker';
 import ModalDropdown from 'react-native-modal-dropdown';
 
 //interface Props extends NavigationInjectedProps {}
@@ -68,28 +63,6 @@ class Leaderboard extends React.Component<Props, State> {
   }
 
   public async componentDidMount () {
-    if (Platform.OS==='android') {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-          {
-            title: "Read storage permissions",
-            message:
-              "Loaf needs access to your file storage so it can display images",
-            buttonNeutral: "Ask Me Later",
-            buttonNegative: "Cancel",
-            buttonPositive: "OK"
-          }
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log("You can read the storage");
-        } else {
-          console.log("Read Storage permission denied");
-        }
-      } catch (err) {
-        console.warn(err);
-      }
-    }
   await this.buildLoafs();
 }
 
@@ -101,34 +74,19 @@ class Leaderboard extends React.Component<Props, State> {
     public render() {
         return (
           <View>
-            <Modal isVisible={this.state.loading && this.state.loafs.length===0}
-            onBackButtonPress={() => {
+            {/* <Modal 
+              isVisible={this.state.loading && this.state.loafs.length===0}
+              onBackButtonPress={() => {
                 this.setState({loading:false})
                 this.props.navigation.navigate('Main')}}
+              coverScreen={false}
             >
               <ActivityIndicator size='large' style={{alignSelf:'center'}} color='white'></ActivityIndicator>
-            </Modal>
+            </Modal> */}
             <FlatList
               data={this.state.loafs}
               ListHeaderComponentStyle={{zIndex: 999}}
               ListHeaderComponent={
-              // <DropDownPicker
-              //   items={[
-              //       {label:"Newest", value:"newest"},
-              //       {label:"Top From Today", value:"topToday"},
-              //       {label:"Top This Week", value:"topThisWeek"},
-              //       {label:"Top All Time", value:"topAllTime"},
-              //   ]}
-              //   defaultValue={"newest"}
-              //   containerStyle={{
-              //     alignSelf:'center', width:220,
-              //     marginTop: 12, 
-              //     marginBottom: this.state.loading && this.state.loafs.length===0 ? 12 : 0,
-              //     zIndex: 999
-              //   }}
-              //   labelStyle={styles.buttonTitleStyle}
-              //   onChangeItem={(item) => this.handleChangeSortMethod(item.value.toString())}
-              // />
               <ModalDropdown
                 style={{alignSelf: 'center', width: '60%', height:30, 
                   marginTop: 12, 
@@ -148,9 +106,16 @@ class Leaderboard extends React.Component<Props, State> {
               />
               }
               ListFooterComponent={
-                <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
+                this.state.loading && this.state.loafs.length ==0 ?
+                <View style={{justifyContent:'center', alignItems: 'center'}}>
+                  <ActivityIndicator size='large'  style={{alignSelf:'center'}}></ActivityIndicator>
+                </View> :
+                <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center', marginTop: this.state.loading ? 0 : 12}}>
                   <Button buttonStyle={styles.buttonStyle} titleStyle={styles.buttonTitleStyle} disabled={!this.state.moreToLoad || this.state.loading}
-                    onPress={this.handleNext}  title="Next" iconRight={true} icon={this.state.startAt && this.state.loafs.length>0 && this.state.loading && 
+                    onPress={this.handleNext}  title="Next" iconRight={true} 
+                    icon={
+                      this.state.startAt && this.state.loafs.length>0 && 
+                      this.state.loading && 
                       <ActivityIndicator style={{marginLeft: 4}} size='small' color='white'></ActivityIndicator>
                     }></Button>
                 </View>
@@ -236,6 +201,7 @@ class Leaderboard extends React.Component<Props, State> {
 
 
     private buildLoafs = async () => {
+      const startingSortingMode = this.state.sortingMode;
       this.setState({loading: true})
       let loafsArray = [];
       let iamgesArray = [];
@@ -281,24 +247,25 @@ class Leaderboard extends React.Component<Props, State> {
         iamgesArray.push(uri)
         console.log("index: " + i + " imageUri: " + uri);
       };
-      if (this.state.loafs.length === 0) {
-        this.setState({
-          loafs: loafsArray,
-          imageUris: iamgesArray,
-          images: images,
-          loading: false,
-          moreToLoad : loafsArray.length < this.state.loafCount ? false : true
-        })
-      } else {
-        this.setState({
-          loafs: [...this.state.loafs, ...loafsArray],
-          imageUris: [...this.state.imageUris, ...iamgesArray],
-          images: [...this.state.images, images],
-          loading: false,
-          moreToLoad : loafsArray.length < this.state.loafCount ? false : true
-        })
+      if (startingSortingMode === this.state.sortingMode) {
+        if (this.state.loafs.length === 0) {
+          this.setState({
+            loafs: loafsArray,
+            imageUris: iamgesArray,
+            images: images,
+            loading: false,
+            moreToLoad : loafsArray.length < this.state.loafCount ? false : true
+          })
+        } else {
+          this.setState({
+            loafs: [...this.state.loafs, ...loafsArray],
+            imageUris: [...this.state.imageUris, ...iamgesArray],
+            images: [...this.state.images, images],
+            loading: false,
+            moreToLoad : loafsArray.length < this.state.loafCount ? false : true
+          })
+        }
       }
-      //console.log("XXX iamges size: " + images.length + 'XXX image uri is: ' + images[0].uri);
     }
 }
 

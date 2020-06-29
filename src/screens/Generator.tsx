@@ -19,8 +19,11 @@ import {
   Dimensions,
 } from 'react-native';
 
-import {Button, Input, 
-  Text,} from 'react-native-elements'
+import {
+  Button,
+  Input, 
+  Text,
+} from 'react-native-elements'
 
 import CameraRoll from "@react-native-community/cameraroll";
 
@@ -75,6 +78,8 @@ interface State {
 
   regenerateMarkovAfterCount: number,
   countSinceRegenerateMArkov: number,
+
+  permissionsAlreadyGranted: boolean,
 }
 
 interface Props {
@@ -145,35 +150,13 @@ export default class Generator extends React.Component<Props, State> {
        testImage: require('../../assets/BmtIdkrCcAAl39D.jpg'),
        pictureBoxDimension: Dimensions.get('window').width * .85,
        hasGeneratedFullMarkov:false,
+       permissionsAlreadyGranted: false,
     }
   }
 
   public async componentDidMount() {
     this.mounted=true;
     await this.generateMarkovSafely();
-    if (Platform.OS === 'android'){
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-          {
-            title: "Write storage permissions",
-            message:
-              "Cool Photo App needs access to your camera " +
-              "so you can take awesome pictures.",
-            buttonNeutral: "Ask Me Later",
-            buttonNegative: "Cancel",
-            buttonPositive: "OK"
-          }
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log("You can use the storage");
-        } else {
-          console.log("Storage permission denied");
-        }
-      } catch (err) {
-        console.warn(err);
-      }
-    }
     console.log("finished permissions and safe markov");
 
     // let options = {
@@ -356,12 +339,48 @@ export default class Generator extends React.Component<Props, State> {
     )
   }
 
+  private requestPermissions = async () => {
+    if (Platform.OS === 'android'){
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: "Write storage permissions",
+            message:
+              "Cool Photo App needs access to your camera " +
+              "so you can take awesome pictures.",
+            buttonNeutral: "Ask Me Later",
+            buttonNegative: "Cancel",
+            buttonPositive: "OK"
+          }
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log("You can use the storage");
+          this.setState({permissionsAlreadyGranted: true});
+        } else {
+          console.log("Storage permission denied");
+        }
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+  }
+
+  private checkPermissions = async () => {
+    const granted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
+    this.setState({permissionsAlreadyGranted: granted});
+    if (!granted) {
+      await this.requestPermissions();
+    }
+  }
+
+
   private onCapture = uri => {
     this.setState({captureUri: uri})
   };
 
   private handleShare = async () => {
-    this.capWithoutSave();
+    await this.capWithoutSave();
     const shareOptions = {
       title: 'Share via',
       message: 'Enjoy this wonderful meme created with Loaf',
@@ -589,9 +608,13 @@ export default class Generator extends React.Component<Props, State> {
   }
 
   private cap = async () => {
+    if (!this.state.permissionsAlreadyGranted) {
+      await this.checkPermissions();
+    }
     const uri = await this.refs.viewShot.capture();
     console.log("captured uri was: " + uri);
-    CameraRoll.save(uri, {album: 'Loafs', type: 'photo'});
+    await CameraRoll.save(uri, {album: 'Loafs', type: 'photo'});
+    ToastAndroid.show("Loaf saved to phone.", ToastAndroid.SHORT);
     //CameraRoll.save(uri, {album: 'Loafs', type: 'photo'});
   }
 

@@ -58,3 +58,5 @@ buck-out/
 # CocoaPods
 /ios/Pods/
 firebase.json
+android/java_pid98133.hprof
+android/gradle.properties

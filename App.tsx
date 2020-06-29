@@ -52,8 +52,9 @@ export default class App extends React.Component<Props, State> {
           </View>
         </Modal>
         <Stack.Navigator initialRouteName="Main">
-          <Stack.Screen name="Main" component={Main} options={{headerTitle: () => 
-              <Text style= {styles.headerTextStyles}>LOAF</Text>, 
+          <Stack.Screen name="Main"  component={Main} options={{
+              headerTitle: () => 
+                <Text style= {styles.headerTextStyles}>LOAF</Text>, 
               headerRight: () => (
                 <Button
                   title="About"
