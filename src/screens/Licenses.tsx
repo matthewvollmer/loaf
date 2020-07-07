@@ -68,6 +68,7 @@ class Licenses extends React.Component<Props, State> {
             {this.createLicensesList("react-native-gesture-handler", "MIT", "^1.6.1",)}
 
             {this.createLicensesList("react-native-gl-image-filters", "MIT", "^0.1.1",)}
+            {this.createLicensesList("react-native-really-awesome-button", "MIT", "^1.6.0",)}
             {this.createLicensesList("react-native-modal-dropdow", "MIT", "^0.7.0 ",)}
             {this.createLicensesList("eact-native-modal", "MIT", "^11.5.6",)}
             {this.createLicensesList("react-native-reanimated", "MIT", "^1.9.0",)}

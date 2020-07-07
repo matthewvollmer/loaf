@@ -10,6 +10,7 @@ import Modal from 'react-native-modal'
 import Share from 'react-native-share';
 import { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 import ModalDropdown from 'react-native-modal-dropdown';
+import AwesomeButton from 'react-native-really-awesome-button';
 
 //interface Props extends NavigationInjectedProps {}
 
@@ -129,17 +130,31 @@ class Leaderboard extends React.Component<Props, State> {
                     <Text style={{textAlign:'center', fontSize: 18, fontFamily: 'Nathaniel19-Regular'}}>{'Created: ' + item.item.date.toDate().toLocaleDateString()}</Text>
                     <Image source= {{uri: uri}} resizeMode='contain' style={{ width: 350, height: 350, alignSelf:'center' }}/>
                     <View style={{flexDirection: 'row', justifyContent:'center'}}>
-                      <Button buttonStyle={{margin:8, width: 110, alignSelf: 'center'}} 
-                        onPress={() => this.handleLike(item.item.id, item.index)} title={item.item.liked ? (item.item.score+1).toString() : item.item.score.toString()} 
+                      <AwesomeButton
+                        backgroundColor={this.state.loafs[item.index].liked ? '#e3e6e8' : '#1b8bd5'}
+                        backgroundDarker={this.state.loafs[item.index].liked ? '#a7a7a8' : '#144a6b'}
+                        backgroundShadow={this.state.loafs[item.index].liked ? '#a7a7a8' : '#144a6b'}
                         disabled={this.state.loafs[item.index].liked}
-                        titleStyle={{fontSize: 18, fontFamily: 'Nathaniel19-Regular'}}
-                        icon= {
+                        width={110} height={40} borderRadius={8}
+                        onPress={() => this.handleLike(item.item.id, item.index)}
+                        style={{alignSelf:'center',margin:8, justifyContent:'center', alignItems: 'center'}}
+                        >  
                           <Icon style={{left:0, marginRight: 12 }} name='thumbs-o-up' size={20} color='white'/>
-                      }/>
-                      <Button buttonStyle={{margin:8, width: 110, alignSelf: 'center'}}
-                      onPress={() => this.handleShare(item.index)}
-                      titleStyle={{fontSize: 18, fontFamily: 'Nathaniel19-Regular'}}
-                      title="Share"></Button>
+                          <Text style={{fontSize: 18, fontFamily: 'Nathaniel19-Regular', color:'white'}}>
+                            {item.item.liked ? (item.item.score+1).toString() : item.item.score.toString()}
+                          </Text>
+                      </AwesomeButton>
+                      <AwesomeButton
+                        textFontFamily='Nathaniel19-Regular' textSize={18}
+                        backgroundColor='#1b8bd5'
+                        backgroundDarker='#144a6b'
+                        backgroundShadow='#144a6b'
+                        width={110} height={40} borderRadius={8}
+                        onPress={() => this.handleShare(item.index)}
+                        style={{alignSelf:'center',margin:8, justifyContent:'center', alignItems: 'center'}}
+                        >
+                          Share
+                      </AwesomeButton>
                     </View>
                     
                </View>

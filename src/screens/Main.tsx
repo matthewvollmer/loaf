@@ -5,6 +5,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../App';
 import admob, { BannerAd, TestIds, MaxAdContentRating, BannerAdSize } from '@react-native-firebase/admob';
+import AwesomeButton from "react-native-really-awesome-button";
 
 //interface Props extends NavigationInjectedProps {}
 
@@ -53,18 +54,34 @@ class Main extends React.Component<Props, State> {
         const adId = __DEV__ ?  TestIds.BANNER : "ca-app-pub-9855234796425536/6028942568";
         return (
           <View style={styles.parentContainer}>
-              <Button
-                titleStyle= {styles.buttonTitleStyle}
-                buttonStyle= {styles.img}
-                title={'Generator'}
-                onPress={() => this.props.navigation.navigate('Generator')}>
-              </Button>
-              <Button
-                titleStyle= {styles.buttonTitleStyle}
-                buttonStyle= {styles.img}
-                title={'Leaderboard'}
-                onPress={() => this.props.navigation.navigate('Leaderboard')}>
-              </Button>
+              <AwesomeButton
+                  textFontFamily='Nathaniel19-Regular'
+                  textSize={18}
+                  type='anchor'
+                  backgroundColor='#1b8bd5'
+                  backgroundDarker='#1c6694'
+                  backgroundShadow='#144a6b'
+                  backgroundActive="rgba(0,0,0,0)"
+                  // style= {styles.img}
+                  width={200}
+                  onPress={() => this.props.navigation.navigate('Generator')}
+                  style={{marginVertical: 12}}>
+                  Generator
+              </AwesomeButton>
+              <AwesomeButton
+                  textFontFamily='Nathaniel19-Regular'
+                  textSize={18}
+                  type='anchor'
+                  backgroundColor='#1b8bd5'
+                  backgroundDarker='#1c6694'
+                  backgroundShadow='#144a6b'
+                  backgroundActive="rgba(0,0,0,0)"
+                  // style= {styles.img}
+                  width={200}
+                  onPress={() => this.props.navigation.navigate('Leaderboard')}
+                  style={{marginVertical: 12}}>
+                  Leaderboard
+              </AwesomeButton>
               <View style={{position:'absolute', bottom:0}}>
                 <BannerAd 
                   unitId={adId}

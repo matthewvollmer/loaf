@@ -64,9 +64,9 @@ export default class App extends React.Component<Props, State> {
                   buttonStyle={{marginRight:18}}
                 />)}}  />
             <Stack.Screen name="Generator" component={Generator} options={{headerTitle: () => 
-              <Text style= {styles.headerTextStyles}>Generator</Text>}}  />
+              <Text style= {styles.headerTextStyles}>Generator</Text>, headerBackTitleStyle:styles.backHeaderTextStyle}}  />
           <Stack.Screen name="Leaderboard" component={Leaderboard} options={{headerTitle: () => 
-              <Text style= {styles.headerTextStyles}>Leaderboard</Text>}}  />
+              <Text style= {styles.headerTextStyles}>Leaderboard</Text>, headerBackTitleStyle:styles.backHeaderTextStyle}}  />
         </Stack.Navigator>
       </NavigationContainer>
     )
@@ -88,5 +88,10 @@ const styles = StyleSheet.create({
     color: 'black',
     fontWeight: '800',
     fontSize: 20
+  },
+
+  backHeaderTextStyle: {
+    fontFamily:'Nathaniel19-Regular', 
+    fontSize: 18
   }
 });

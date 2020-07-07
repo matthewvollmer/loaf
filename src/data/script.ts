@@ -881,7 +881,6 @@ export const script = ["The water's getting warm so you might as well swim",
 
 "Quit it.",
 "Because you don't listen!",
-"Poo water!",
 
 "your opening statement, please.",
 "Would you remove your shoes?",

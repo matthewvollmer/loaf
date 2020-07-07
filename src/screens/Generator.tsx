@@ -20,6 +20,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import GLImage from "gl-react-image";
 import {Grayscale, Sepia, Tint, Polaroid, Invert, Cool, 
   concatColorMatrices, contrast,saturate, ColorMatrix, Browni, Lsd, HueRotate} from 'react-native-color-matrix-image-filters';
+import AwesomeButton from 'react-native-really-awesome-button';
 
 interface State {
   captureUri: string,
@@ -137,11 +138,33 @@ export default class Generator extends React.Component<Props, State> {
     }
   }
 
+  private calculateButtonGap= () => {
+    const height = Dimensions.get('window').height;
+    if (Platform.OS === 'android') {
+      if (height< 670) return 2;
+      else return 4
+    }
+    else {
+      if (height< 700) return 2;
+      else if (height<800) return 3;
+      else return 4
+    }
+  }
+
   private calculateButtonHeight = () => {
     const height = Dimensions.get('window').height;
-    if (height< 640) return 28;
-    else if (height < 670) return 32; 
-    else return 38;
+    console.log("Height is: " + height);
+    if (Platform.OS === 'android') {
+      if (height< 640) return 28;
+      else if (height < 670) return 32; 
+      else return 38;
+    }
+    else {
+      if (height< 700) return 28;
+      else if (height < 800) return 32; 
+      else return 42;
+    }
+
   }
 
   private calculateSmallButtonFontSize = () => {
@@ -317,22 +340,72 @@ export default class Generator extends React.Component<Props, State> {
         <ScrollView
           >
           <View style={{flex:1, alignItems: 'center', justifyContent: 'center'}}>
-            <Button buttonStyle={{alignSelf:'center', marginBottom:this.state.calculatedButtonGap, width:220, 
-              height:this.state.calculatedButtonHeight}} 
-              onPress={this.generate} title={'Generate Meme'} 
-              titleStyle={[styles.buttonTitleStyle, {fontSize: this.state.calculatedSmallButtonFontSize}]}/>
-            <Button buttonStyle={{alignSelf:'center', marginVertical:this.state.calculatedButtonGap, width:220, 
-              height:this.state.calculatedButtonHeight}} 
-              onPress={this.handleSubmitToLeaderboardPress} title={'Submit To Leaderboard'} 
-              titleStyle={[styles.buttonTitleStyle, {fontSize: this.state.calculatedSmallButtonFontSize}]}/>
-            <Button type='outline' buttonStyle={{alignSelf:'center', marginVertical:this.state.calculatedButtonGap, width:220, 
-              height:this.state.calculatedButtonHeight}} 
-              onPress={this.cap} title={'Save To Phone'} 
-              titleStyle={[styles.buttonTitleStyle, {fontSize: this.state.calculatedSmallButtonFontSize}]}/>
-            <Button type='outline' buttonStyle={{alignSelf:'center', marginVertical:this.state.calculatedButtonGap, width:220, 
-              height:this.state.calculatedButtonHeight}} 
-              onPress={this.handleShare} title={'Share External'} 
-              titleStyle={[styles.buttonTitleStyle, {fontSize: this.state.calculatedSmallButtonFontSize}]}/>
+            <AwesomeButton
+              textFontFamily='Nathaniel19-Regular'
+              textSize={18}
+              type='anchor'
+              backgroundColor='#1b8bd5'
+              backgroundDarker='#144a6b'
+              backgroundShadow='#144a6b'
+              borderRadius={8}
+              height={this.state.calculatedButtonHeight}
+              width={220}
+              onPress={this.generate}
+              style={{alignSelf:'center', marginBottom:this.state.calculatedButtonGap}}
+              >
+                Generate Meme
+            </AwesomeButton>
+            <AwesomeButton
+              textFontFamily='Nathaniel19-Regular'
+              textSize={18}
+              type='anchor'
+              backgroundColor='#1b8bd5'
+              backgroundDarker='#144a6b'
+              backgroundShadow='#144a6b'
+              borderRadius={8}
+              height={this.state.calculatedButtonHeight}
+              width={220}
+              onPress={this.handleSubmitToLeaderboardPress}
+              style={{alignSelf:'center', marginVertical:this.state.calculatedButtonGap+1}}
+              >
+                Submit To Leaderboard
+            </AwesomeButton>
+            <AwesomeButton
+              textFontFamily='Nathaniel19-Regular'
+              textSize={18}
+              type='anchor'
+              backgroundColor='#FFFFFF'
+              backgroundDarker='#1b8bd5'
+              backgroundShadow='#1b8bd5'
+              textColor='#1b8bd5'
+              borderRadius={8}
+              borderWidth={1}
+              borderColor='#1b8bd5'
+              height={this.state.calculatedButtonHeight}
+              width={220}
+              onPress={this.cap}
+              style={{alignSelf:'center', marginVertical:this.state.calculatedButtonGap+1}}
+              >
+                Save To Phone
+            </AwesomeButton>
+            <AwesomeButton
+                textFontFamily='Nathaniel19-Regular'
+                textSize={18}
+                type='anchor'
+                backgroundColor='#FFFFFF'
+                backgroundDarker='#1b8bd5'
+                backgroundShadow='#1b8bd5'
+                textColor='#1b8bd5'
+                borderRadius={8}
+                borderWidth={1}
+                borderColor='#1b8bd5'
+                height={this.state.calculatedButtonHeight}
+                width={220}
+                onPress={this.handleShare}
+                style={{alignSelf:'center', marginVertical:this.state.calculatedButtonGap+1}}
+                >
+                Share External
+            </AwesomeButton>
           </View>
         </ScrollView>
         <View style={{bottom:0, alignSelf: 'center'}}>
