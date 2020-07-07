@@ -11,6 +11,11 @@ Check out other user's Loafs, and vote for your favorites on the **Leaderboard**
 For feedback and support, please contact me at: 
 - mdvollmer@ucdavis.edu
 
+# Example Loafs:
+<img src="https://firebasestorage.googleapis.com/v0/b/loaf-eaa81.appspot.com/o/userLoafs%2FFKVFUt7hSBgHa60OPlLi?alt=media&token=1619c4e2-a4c9-4310-8757-38f10f7cdd99" width="200" height="250" />
+<img src="https://firebasestorage.googleapis.com/v0/b/loaf-eaa81.appspot.com/o/userLoafs%2FnA0cwdRrhEZoULLf4Adn?alt=media&token=b8f10eee-9f6c-4f68-b57e-f8756a106e01" width="200" height="250" />
+<img src="https://firebasestorage.googleapis.com/v0/b/loaf-eaa81.appspot.com/o/userLoafs%2FbN9mjTlvWm3uNAtnZtfd?alt=media&token=ed35d350-bece-4d1c-8d16-2214f974c7aa" width="200" height="250" />
+
 
 > All pictures viewed in the app have been taken and are owned by Myself and Taylor Hunsucker.  
 
