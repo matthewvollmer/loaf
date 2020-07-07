@@ -88,18 +88,19 @@ class Leaderboard extends React.Component<Props, State> {
               ListHeaderComponentStyle={{zIndex: 999}}
               ListHeaderComponent={
               <ModalDropdown
-                style={{alignSelf: 'center', width: '60%', height:30, 
+                style={{alignSelf: 'center', width: '60%', height:35, 
                   marginTop: 12, 
                   marginBottom: this.state.loading && this.state.loafs.length===0 ? 12 : 0,
                   justifyContent:'center', backgroundColor:'white'
 
                  }}
                 options={['Newest', 'Top Today', 'Top This Week', 'Top All Time']}
-                dropdownStyle={{alignSelf: 'center',width:'60%', height:135}}
+                dropdownStyle={{alignSelf: 'center',width:'60%', height:150}}
+                dropdown
                 onSelect={(idx, value) => this.handleChangeSortMethod(value)}
                 defaultValue="Newest"
-                textStyle={[styles.buttonTitleStyle,{alignSelf: 'center'}]}
-                dropdownTextStyle={styles.buttonTitleStyle}
+                dropdownTextStyle={[styles.buttonTitleStyle,{alignSelf: 'center', fontSize: 14}]}
+                textStyle={[styles.buttonTitleStyle,{alignSelf: 'center', fontSize: 14}]}
                 animated={true}
 
                 

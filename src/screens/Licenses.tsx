@@ -58,6 +58,8 @@ class Licenses extends React.Component<Props, State> {
 
             {this.createLicensesList("gl-react-native", "MIT", "^4.0.1",)}
             {this.createLicensesList("gl-react", "MIT", "^4.0.1",)}
+            {this.createLicensesList("react-native-color-matrix-image-filters", "MIT", "^5.2.5",)}
+            {this.createLicensesList("gl-react-image", "MIT", "^3.1.1",)}
             {this.createLicensesList("markov-generator", "ISC", "^1.2.2",)}
 
             {this.createLicensesList("random-words", "MIT", "^1.1.1",)}

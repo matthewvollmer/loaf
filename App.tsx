@@ -59,7 +59,7 @@ export default class App extends React.Component<Props, State> {
                 <Button
                   title="About"
                   type="outline"
-                  titleStyle={{fontFamily:'Nathaniel19-Regular', fontSize:8}}
+                  titleStyle={{fontFamily:'Nathaniel19-Regular', fontSize:14}}
                   onPress={() => this.setState({showAbout: true})}
                   buttonStyle={{marginRight:18}}
                 />)}}  />

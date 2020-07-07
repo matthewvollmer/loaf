@@ -1,51 +1,25 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import React from 'react';
-import {
-  StyleSheet,
-  View,
-  PermissionsAndroid,
-  ImageSourcePropType,
-  ActivityIndicator,
-  ToastAndroid,
-  Platform,
-  Image,
-  Dimensions,
-} from 'react-native';
-
-import {
-  Button,
-  Input, 
-  Text,
-} from 'react-native-elements'
-
+import { StyleSheet, View, PermissionsAndroid, ImageSourcePropType, ActivityIndicator, ToastAndroid,
+  Alert, Platform, Image, Dimensions, ImageProps } from 'react-native';
+import { Button, Input, Text } from 'react-native-elements'
 import CameraRoll from "@react-native-community/cameraroll";
-
-import {
-  Colors,
-} from 'react-native/Libraries/NewAppScreen';
-
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 import ViewShot from 'react-native-view-shot';
 import {firebase, FirebaseStorageTypes} from '@react-native-firebase/storage';
 import Share from 'react-native-share';
 import ImageFilters from 'react-native-gl-image-filters';
 import { Surface } from 'gl-react-native';
-import { Node, Shaders, GLSL } from 'gl-react'
 import { createLoaf, getLoafs } from '../data/loafs';
 import { buzzwords } from '../data/buzzwords'
 import { script } from "../data/script"
 import Modal from 'react-native-modal';
-import admob, { BannerAd, TestIds, MaxAdContentRating, BannerAdSize } from '@react-native-firebase/admob';
+import { BannerAd, TestIds, BannerAdSize } from '@react-native-firebase/admob';
 import { MarkovGen } from 'markov-generator'
-import { Loaf } from '../data/types';
 import { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 import { ScrollView } from 'react-native-gesture-handler';
+import GLImage from "gl-react-image";
+import {Grayscale, Sepia, Tint, Polaroid, Invert, Cool, 
+  concatColorMatrices, contrast,saturate, ColorMatrix, Browni, Lsd, HueRotate} from 'react-native-color-matrix-image-filters';
 
 interface State {
   captureUri: string,
@@ -81,7 +55,11 @@ interface State {
 
   permissionsAlreadyGranted: boolean,
   calculatedButtonHeight: number,
-  calculatedButtonGap: number
+  calculatedButtonGap: number,
+  calculatedSmallButtonFontSize: number,
+
+  iosRenderElement?: JSX.Element,
+  iosLoading: boolean,
 }
 
 interface Props {
@@ -123,13 +101,11 @@ export default class Generator extends React.Component<Props, State> {
        ] : 
        [
         'aAlloyInk',
-        // 'monospace',
         'Nathaniel19-Regular',
         'Fipps-Regular',
         'aAhaWow',
-        // 'KOMTITK_',
         'StrangerThings-Regular',
-        'AirAmericana',
+        // 'AirAmericana',
         'Helvetica-Bold',
         'MalayalamSangamMN',
         'Papyrus',
@@ -154,24 +130,38 @@ export default class Generator extends React.Component<Props, State> {
        hasGeneratedFullMarkov:false,
        permissionsAlreadyGranted: false,
 
-       calculatedButtonHeight: Dimensions.get('window').height < 670 ? 28 : 38,
-       calculatedButtonGap: Dimensions.get('window').height < 670 ? 2 : 4
+       calculatedButtonHeight: this.calculateButtonHeight(),
+       calculatedButtonGap: Dimensions.get('window').height < 670 ? 2 : 4,
+       calculatedSmallButtonFontSize: this.calculateSmallButtonFontSize(),
+       iosLoading: false
     }
+  }
+
+  private calculateButtonHeight = () => {
+    const height = Dimensions.get('window').height;
+    if (height< 640) return 28;
+    else if (height < 670) return 32; 
+    else return 38;
+  }
+
+  private calculateSmallButtonFontSize = () => {
+    const height = Dimensions.get('window').height;
+    if (height< 640) return 12;
+    else if (height<670) return 14;
+    else return 18;
   }
 
   public async componentDidMount() {
     this.mounted=true;
     await this.generateMarkovSafely();
-    console.log("finished permissions and safe markov");
-    console.log("Platform Version: " + Platform.Version);
     // let options = {
     //   apiKey: "AIzaSyCwUzvsBSb6N6i81R23BIWStK4nXNJJYSM",
-    //   //authDomain: "<your-auth-domain>",
     //   databaseURL: "<https://loaf-eaa81.firebaseio.com/loafs",
     //   storageBucket: "gs://loaf-eaa81.appspot.com",
     //   appId: '1:924078627556:android:fe397332cc08da21952af1',
     //   projectId: 'loaf-eaa81'
     // }
+    // console.log("firebase.apps.length: "+ firebase.apps.length)
     // !firebase.apps.length ? firebase.initializeApp(options) : firebase.app();
 
     var today = new Date();
@@ -190,7 +180,6 @@ export default class Generator extends React.Component<Props, State> {
       today: today,
       week: week
     })
-    console.log("finished setting loafpics")
     await this.generate();
   }
 
@@ -199,7 +188,6 @@ export default class Generator extends React.Component<Props, State> {
   }
 
   public hideNameEntry = () => {
-    console.log("hide name entry has been called! ")
     this.setState({showNameEntry: false});
   }
 
@@ -211,18 +199,19 @@ export default class Generator extends React.Component<Props, State> {
         }}>
         <View style={{ top:0}}>
         </View>
-        <Modal isVisible={this.state.submitPending}
-            >
-              <ActivityIndicator size='large' style={{alignSelf:'center'}} color='white'></ActivityIndicator>
-            </Modal>
         <Modal isVisible={this.state.showNameEntry}
           onBackButtonPress={this.hideNameEntry}
           onBackdropPress={this.hideNameEntry}
-          avoidKeyboard={false}
-          coverScreen={false}
+          avoidKeyboard={Platform.OS === 'ios'}
+          coverScreen={true}
         >
           <View style={{backgroundColor:'white', borderRadius: 12, 
               alignSelf: 'center', justifyContent:'flex-start'}}>
+          <Modal 
+            isVisible={this.state.submitPending}
+            >
+          <ActivityIndicator size='large' style={{alignSelf:'center'}} color='white'></ActivityIndicator>
+            </Modal>
             <Text style={[styles.buttonTitleStyle, {margin:12, fontSize: 24, textAlign:'center'}]}>Who created this loaf masterpiece?</Text>
             <Input 
               containerStyle={{margin: 12, alignSelf: 'center', width:250}}
@@ -243,7 +232,7 @@ export default class Generator extends React.Component<Props, State> {
             justifyContent:'center', width:this.state.pictureBoxDimension + 4,
             marginVertical: 8
           }}>
-          {this.state.imageLoading ? 
+          {(this.state.imageLoading) ? 
           <View
             style={{
               width:this.state.pictureBoxDimension + 4, 
@@ -259,15 +248,14 @@ export default class Generator extends React.Component<Props, State> {
             onCapture={(uri: any) => this.onCapture(uri)}>
               {Platform.OS === 'android' && Platform.Version > 24 ? 
               <Surface
+                preload={[{uri: this.state.testUri}]}
                 style={{
                   width:this.state.pictureBoxDimension, 
-                  height:undefined, 
-                  aspectRatio: 1,}}
+                  height:this.state.pictureBoxDimension,}}
               >
                 <ImageFilters
                   width={this.state.pictureBoxDimension}
                   height={this.state.pictureBoxDimension}
-                  aspectRatio={1}
                   hue={this.state.hue}
                   sepia={this.state.sepia}
                   sharpen={this.state.sharpen}
@@ -275,16 +263,16 @@ export default class Generator extends React.Component<Props, State> {
                   saturation={this.state.saturation}
                   temperature={this.state.temperature}
                   >
-                    {{uri: this.state.testUri}}
+                    <GLImage
+                      source={{uri: this.state.testUri}}
+                      resizeMode='contain'
+                      style={{width:this.state.pictureBoxDimension, 
+                        height: this.state.pictureBoxDimension}}
+                    />
                 </ImageFilters>
               </Surface> :
-              <View style={{width:this.state.pictureBoxDimension, height:undefined, aspectRatio: 1}}>
-                <Image
-                  source={{uri: this.state.testUri, width:this.state.pictureBoxDimension, 
-                      height: this.state.pictureBoxDimension}}
-                  resizeMode='contain'
-                  style={{flex:1,}}
-                />
+              <View>
+                {this.state.iosRenderElement}
               </View> 
               }
               <View style={{
@@ -331,16 +319,20 @@ export default class Generator extends React.Component<Props, State> {
           <View style={{flex:1, alignItems: 'center', justifyContent: 'center'}}>
             <Button buttonStyle={{alignSelf:'center', marginBottom:this.state.calculatedButtonGap, width:220, 
               height:this.state.calculatedButtonHeight}} 
-              onPress={this.generate} title={'Generate Meme'} titleStyle={styles.buttonTitleStyle}/>
+              onPress={this.generate} title={'Generate Meme'} 
+              titleStyle={[styles.buttonTitleStyle, {fontSize: this.state.calculatedSmallButtonFontSize}]}/>
             <Button buttonStyle={{alignSelf:'center', marginVertical:this.state.calculatedButtonGap, width:220, 
               height:this.state.calculatedButtonHeight}} 
-              onPress={this.handleSubmitToLeaderboardPress} title={'Submit To Leaderboard'} titleStyle={styles.buttonTitleStyle}/>
+              onPress={this.handleSubmitToLeaderboardPress} title={'Submit To Leaderboard'} 
+              titleStyle={[styles.buttonTitleStyle, {fontSize: this.state.calculatedSmallButtonFontSize}]}/>
             <Button type='outline' buttonStyle={{alignSelf:'center', marginVertical:this.state.calculatedButtonGap, width:220, 
               height:this.state.calculatedButtonHeight}} 
-              onPress={this.cap} title={'Save To Phone'} titleStyle={styles.buttonTitleStyle}/>
+              onPress={this.cap} title={'Save To Phone'} 
+              titleStyle={[styles.buttonTitleStyle, {fontSize: this.state.calculatedSmallButtonFontSize}]}/>
             <Button type='outline' buttonStyle={{alignSelf:'center', marginVertical:this.state.calculatedButtonGap, width:220, 
               height:this.state.calculatedButtonHeight}} 
-              onPress={this.handleShare} title={'Share External'} titleStyle={styles.buttonTitleStyle}/>
+              onPress={this.handleShare} title={'Share External'} 
+              titleStyle={[styles.buttonTitleStyle, {fontSize: this.state.calculatedSmallButtonFontSize}]}/>
           </View>
         </ScrollView>
         <View style={{bottom:0, alignSelf: 'center'}}>
@@ -402,6 +394,7 @@ export default class Generator extends React.Component<Props, State> {
 
   private handleShare = async () => {
     await this.capWithoutSave();
+    console.log("about to share. uri is: "+ this.state.captureUri);
     const shareOptions = {
       title: 'Share via',
       message: 'Enjoy this wonderful meme created with Loaf',
@@ -415,26 +408,17 @@ export default class Generator extends React.Component<Props, State> {
       await Share.open(shareOptions);
     }
     catch (err) {
-      ToastAndroid.show(err.message, ToastAndroid.SHORT);
+      Platform.OS === 'android' &&
+        ToastAndroid.show(err.message, ToastAndroid.SHORT)
     }
   }
 
   private handleSubmitToLeaderboardPress = () => {
-    console.log("handling submit to leaderboard button press")
     this.setState({showNameEntry: true});
   }
 
   private handleSubmitToLeaderboard = async () => {
-    console.log("submit has been pressed!")
     this.setState({submitPending: true})
-    var today = new Date();
-    today.setHours(0,0,0,0);
-
-    var date = new Date();
-    var day = date.getDay()
-    var diff = date.getDate() - day  + (day == 0 ? -6:1)
-
-    var week = new Date(date.setDate(diff));
     await this.capWithoutSave();
     await createLoaf(
       {
@@ -551,7 +535,7 @@ export default class Generator extends React.Component<Props, State> {
     if (!(memeText.endsWith(".")||memeText.endsWith("?")||memeText.endsWith("!"))) {memeText += '.'}
     let firstCharUppercase = memeText.charAt(0).toUpperCase() + memeText.slice(1)
     let font : string= this.state.fontArray[randomNumberForFont];
-    console.log("FONT WAS: " + font);
+    console.log("selected font was: " + font);
 
     if (!this.mounted) return;
     await this.setState({
@@ -565,6 +549,7 @@ export default class Generator extends React.Component<Props, State> {
     if (!this.mounted) return;
     this.applyRandomFilter();
     this.setState({imageLoading: false})
+    Platform.OS === 'ios' && this.setState({iosRenderElement: this.generateIOSFilterComponent()});
     if (!this.state.hasGeneratedFullMarkov) {
       this.generateMarkov();
     }
@@ -631,20 +616,83 @@ export default class Generator extends React.Component<Props, State> {
   }
 
   private cap = async () => {
-    if (!this.state.permissionsAlreadyGranted) {
+    if (!this.state.permissionsAlreadyGranted && Platform.OS === 'android') {
       await this.checkPermissions();
     }
     const uri = await this.refs.viewShot.capture();
     console.log("captured uri was: " + uri);
-    await CameraRoll.save(uri, {album: 'Loafs', type: 'photo'});
-    ToastAndroid.show("Loaf saved to phone.", ToastAndroid.SHORT);
-    //CameraRoll.save(uri, {album: 'Loafs', type: 'photo'});
+    let saveString = await CameraRoll.save(uri, {album: 'Loafs', type: 'photo'});
+    console.log("Saved to: " + saveString)
+    Platform.OS === 'android' ? 
+      ToastAndroid.show("Loaf saved to phone.", ToastAndroid.SHORT) :
+      Alert.alert("Loaf saved to phone.")
   }
 
   private capWithoutSave = async () => {
     const uri = await this.refs.viewShot.capture();
   }
-  
+
+  private generateIOSFilterComponent = () => {
+    const styleProps = {width:this.state.pictureBoxDimension, height:undefined, aspectRatio: 1}
+    const internalImageProps : ImageProps = {
+      source: {uri: this.state.testUri, width:this.state.pictureBoxDimension, 
+        height: this.state.pictureBoxDimension},
+      resizeMode:'contain',
+      style: {flex:1},
+      
+      onLoadStart:  () =>  this.setState({iosLoading: true}),
+      onLoadEnd:  () =>  this.setState({iosLoading: false}),
+      }
+    const filterType = Math.floor(Math.random() * 11);
+    switch(filterType) {
+      case(0):
+        return <Grayscale style={styleProps}> 
+          <Image {...internalImageProps} /> 
+        </Grayscale>
+      case(1): 
+        return <Sepia style={styleProps}> 
+          <Image {...internalImageProps} /> 
+        </Sepia>
+      case(2): 
+        return <Tint amount={1.25}> 
+          <Sepia style={styleProps}> 
+            <Image {...internalImageProps} /> 
+          </Sepia> 
+        </Tint>
+      case(3): 
+        return <Lsd style={styleProps}> 
+          <Image {...internalImageProps} /> 
+        </Lsd>
+      case(4): 
+        return <Polaroid style={styleProps}> 
+          <Image {...internalImageProps} /> 
+        </Polaroid>
+      case(5): 
+        return <Invert style={styleProps}> 
+          <Image {...internalImageProps} /> 
+        </Invert>
+      case(6): 
+        return <Cool style={styleProps}> 
+          <Image {...internalImageProps} /> 
+        </Cool>
+      case(7): 
+        return <View style={styleProps}> 
+          <Image {...internalImageProps} /> 
+        </View>
+      case(8): 
+        return <ColorMatrix style={styleProps} matrix={concatColorMatrices([saturate(-0.5), contrast(3.2)])}> 
+          <Image {...internalImageProps} /> 
+        </ColorMatrix>
+      case(9): 
+        return <Browni style={styleProps}> 
+          <Image {...internalImageProps} /> 
+        </Browni>
+      case(10): 
+        return <HueRotate style={styleProps} amount={2}> 
+          <Image {...internalImageProps} /> 
+        </HueRotate>
+    }
+  }
 }
 
 const styles = StyleSheet.create({
@@ -653,5 +701,9 @@ const styles = StyleSheet.create({
   },
   buttonTitleStyle: {
     fontFamily:'Nathaniel19-Regular', 
+  },
+  smallButtonTitleStyle: {
+    fontFamily:'Nathaniel19-Regular', 
+    fontSize: 18
   }
 });

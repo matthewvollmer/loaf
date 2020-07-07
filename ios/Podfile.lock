@@ -664,6 +664,8 @@ PODS:
     - ReactCommon/callinvoker (= 0.62.2)
   - RNCMaskedView (0.1.10):
     - React
+  - RNColorMatrixImageFilters (5.2.5):
+    - React
   - RNCPicker (1.6.3):
     - React
   - RNFBAdMob (7.2.0):
@@ -771,6 +773,7 @@ DEPENDENCIES:
   - ReactCommon/callinvoker (from `../node_modules/react-native/ReactCommon`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
+  - RNColorMatrixImageFilters (from `../node_modules/react-native-color-matrix-image-filters`)
   - "RNCPicker (from `../node_modules/@react-native-community/picker`)"
   - "RNFBAdMob (from `../node_modules/@react-native-firebase/admob`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
@@ -903,6 +906,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNCMaskedView:
     :path: "../node_modules/@react-native-community/masked-view"
+  RNColorMatrixImageFilters:
+    :path: "../node_modules/react-native-color-matrix-image-filters"
   RNCPicker:
     :path: "../node_modules/@react-native-community/picker"
   RNFBAdMob:
@@ -1021,6 +1026,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: 4356114dbcba4ce66991096e51a66e61eda51256
   ReactCommon: ed4e11d27609d571e7eee8b65548efc191116eb3
   RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
+  RNColorMatrixImageFilters: b63046039affa237c9e8e10a79052fbc7fb9d963
   RNCPicker: 1c63b084bcbcd33d159a83144543f3bda4cd1793
   RNFBAdMob: 3d73e03a07908ab0fe73d361a0b4078f6b13e1b2
   RNFBApp: def13f6392e7c9839c938879f065ec0088c4496a

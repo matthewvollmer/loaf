@@ -90,6 +90,7 @@
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Release"
+      customArchiveName = "loaf-archive-test"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>
