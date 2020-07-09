@@ -2,6 +2,10 @@
 
 Welcome to Loaf! This is a fun meme generator, using pictures of our dog, Maeby! 
 
+**[Download on Apple App Store!](http://google.com)**
+
+**[Download on Google Play Store!](http://google.com)**
+
 Memes use a variety of fonts and filters, and the text is generated using Markov Chains.  When you submit Loafs, and vote for your favorite Loafs on the leaderboard, the Markov algorithm will learn from your submissions, and create smarter memes! Together we can create the perfect dog meme!  
 
 To use, simply click **Generate** from the home page, and then click **Generate Meme** to create new memes! When you're satisfied, you can submit the current meme to the Leaderboard, download it to your phone, or share it with external apps (Facebook, Instagram, etc.)
