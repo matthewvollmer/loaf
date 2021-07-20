@@ -28,7 +28,7 @@
     "markov-generator": "^1.2.2",
     "random-words": "^1.1.1",
     "react": "16.11.0",
-    "react-native": "0.62.2",
+    "react-native": "0.62.3",
     "react-native-color-matrix-image-filters": "^5.2.5",
     "react-native-dropdown-picker": "^3.0.5",
     "react-native-elements": "^2.0.2",
